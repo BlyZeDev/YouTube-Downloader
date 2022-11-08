@@ -1,0 +1,936 @@
+﻿<Window x:Class="YouTubeDownloaderV2.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:sync="http://schemas.syncfusion.com/wpf"
+        xmlns:Microsoft_Windows_Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero"
+        xmlns:adorners="http://gu.se/Adorners"
+        Title="YouTube Downloader"
+        MinHeight="720" MinWidth="1280"
+        Height="720" Width="1280"
+        MaxHeight="720" MaxWidth="1280"
+        WindowStartupLocation="CenterScreen" Icon="icon.ico"
+        WindowStyle="ThreeDBorderWindow" ResizeMode="CanMinimize"
+        SourceInitialized="Window_SourceInitialized"
+        Loaded="Window_Loaded"
+        Closing="Window_Closing">
+
+    <Window.TaskbarItemInfo>
+        <TaskbarItemInfo x:Name="TaskbarInfo"/>
+    </Window.TaskbarItemInfo>
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Syncfusion.Shared.WPF;component/Controls/ComboBoxAdv/Themes/generic.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            
+            <Style TargetType="{x:Type sync:ComboBoxItemAdv}">
+                <Setter Property="FocusVisualStyle" Value="{StaticResource ComboBoxItemFocusVisual}" />
+                <Setter Property="Padding" Value="3,0,3,0" />
+                <Setter Property="BorderThickness" Value="0,0,0,1" />
+                <Setter Property="BorderBrush" Value="Transparent" />
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type sync:ComboBoxItemAdv}">
+                            <Border x:Name="Bd" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="true">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <CheckBox Visibility="{Binding Path=AllowMultiSelect, Converter={StaticResource VisiblityConverter}, RelativeSource={RelativeSource AncestorType={x:Type sync:ComboBoxAdv}}}" IsHitTestVisible="False" Margin="1" x:Name="PART_CheckBox" />
+                                    <ContentPresenter Margin="1" Grid.Column="1"  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                                </Grid>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="FlowDirection" Value="RightToLeft">
+                                    <Setter Property="FlowDirection" TargetName="PART_CheckBox" Value="LeftToRight"/>
+                                </Trigger>
+                                <Trigger Property="sync:SkinStorage.EnableTouch" Value="true">
+                                    <Setter Property="Padding" Value="12,9,10,9" />
+                                    <Setter Property="FontSize" Value="18" />
+                                    <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" />
+                                </Trigger>
+                                <MultiDataTrigger>
+                                    <MultiDataTrigger.Conditions>
+                                        <Condition Binding="{Binding MultiSelect,RelativeSource={RelativeSource Self}}" Value="True" />
+                                        <Condition Binding="{Binding Path=(sync:SkinStorage.EnableTouch), RelativeSource={RelativeSource Self}}" Value="True" />
+                                    </MultiDataTrigger.Conditions>
+                                    <Setter Property="Padding" Value="12,6,10,6" />
+                                    <Setter Property="FontSize" Value="18" />
+                                    <Setter Property="CornerRadius" TargetName="Bd" Value="0" />
+                                    <Setter Property="Margin" TargetName="Bd" Value="0" />
+                                    <Setter Property="BorderThickness" Value="0,0,0,1" />
+                                    <Setter Property="BorderBrush" Value="{DynamicResource  {x:Static SystemColors.WindowFrameBrushKey}}" />
+                                </MultiDataTrigger>
+                                <MultiTrigger>
+                                    <MultiTrigger.Conditions>
+                                        <Condition Property="IsMouseOver" Value="true" />
+                                        <Condition Property="sync:SkinStorage.EnableTouch" Value="true" />
+                                    </MultiTrigger.Conditions>
+                                </MultiTrigger>
+                                <Trigger Property="IsHighlighted" Value="true">
+                                    <Setter Property="Background" TargetName="Bd" Value="{DynamicResource Button}" />
+                                    <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}" />
+                                </Trigger>
+
+                                <MultiTrigger>
+                                    <MultiTrigger.Conditions>
+                                        <Condition Property="IsKeyboardFocusWithin" Value="true" />
+                                        <Condition Property="sync:SkinStorage.EnableTouch" Value="false" />
+                                    </MultiTrigger.Conditions>
+
+                                </MultiTrigger>
+
+                                <MultiTrigger>
+                                    <MultiTrigger.Conditions>
+                                        <Condition Property="IsFocused" Value="true" />
+                                        <Condition Property="sync:SkinStorage.EnableTouch" Value="true" />
+                                    </MultiTrigger.Conditions>
+                                    <Setter Property="Background" TargetName="Bd" Value="transparent" />
+                                    <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}" />
+                                </MultiTrigger>
+
+                                <MultiTrigger>
+                                    <MultiTrigger.Conditions>
+                                        <Condition Property="IsPressed" Value="true" />
+                                        <Condition Property="sync:SkinStorage.EnableTouch" Value="false" />
+                                    </MultiTrigger.Conditions>
+                                    <Setter Property="Background" TargetName="Bd" Value="{DynamicResource Button}" />
+                                    <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}" />
+                                </MultiTrigger>
+
+                                <MultiDataTrigger>
+                                    <MultiDataTrigger.Conditions>
+                                        <Condition Binding="{Binding Path=IsSelected,RelativeSource={RelativeSource Self}}" Value="true" />
+                                        <Condition Binding="{Binding Path=IsKeyboardFocusWithin,RelativeSource={RelativeSource Self}}" Value="false" />
+                                        <Condition Binding="{Binding Path=IsHighlighted,RelativeSource={RelativeSource Self}}" Value="false" />
+                                        <Condition Binding="{Binding MultiSelect,RelativeSource={RelativeSource Self}}" Value="True" />
+                                    </MultiDataTrigger.Conditions>
+                                    <Setter Property="Background" TargetName="Bd" Value="{DynamicResource {x:Static SystemColors.InactiveBorderBrushKey}}" />
+                                    <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.InactiveCaptionTextBrushKey}}" />
+                                </MultiDataTrigger>
+                                <MultiDataTrigger>
+                                    <MultiDataTrigger.Conditions>
+                                        <Condition Binding="{Binding Path=IsSelected,RelativeSource={RelativeSource Self}}" Value="true" />
+                                        <Condition Binding="{Binding Path=IsKeyboardFocusWithin,RelativeSource={RelativeSource Self}}" Value="true" />
+                                        <Condition Binding="{Binding Path=IsHighlighted,RelativeSource={RelativeSource Self}}" Value="false" />
+                                        <Condition Binding="{Binding MultiSelect,RelativeSource={RelativeSource Self}}" Value="True" />
+                                    </MultiDataTrigger.Conditions>
+                                    <Setter Property="Background" TargetName="Bd" Value="{DynamicResource {x:Static SystemColors.InactiveBorderBrushKey}}" />
+                                    <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.InactiveCaptionTextBrushKey}}" />
+                                </MultiDataTrigger>
+                                <Trigger Property="IsEnabled" Value="false">
+                                    <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding Path=IsLoaded, RelativeSource={RelativeSource Self}}" Value="True">
+                        <Setter Property="HorizontalContentAlignment" Value="{Binding Path=HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
+                        <Setter Property="VerticalContentAlignment" Value="{Binding Path=VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+            <Style x:Key="ComboBoxReadonlyToggleButton1" TargetType="{x:Type ToggleButton}">
+
+                <Setter Property="OverridesDefaultStyle" Value="true" />
+                <Setter Property="IsTabStop" Value="false" />
+                <Setter Property="Focusable" Value="false" />
+                <Setter Property="ClickMode" Value="Press" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type ToggleButton}">
+                            <Microsoft_Windows_Themes:ButtonChrome x:Name="Chrome" BorderBrush="{TemplateBinding BorderBrush}" Background="{TemplateBinding Background}" SnapsToDevicePixels="true">
+                                <Grid x:Name="dropdownbutton" HorizontalAlignment="Right" Width="{DynamicResource {x:Static SystemParameters.VerticalScrollBarWidthKey}}">
+                                    <Path x:Name="Arrow" Data="{StaticResource DownArrowGeometry}" Fill="Black" HorizontalAlignment="Center" Margin="3,1,0,0" VerticalAlignment="Center" />
+                                </Grid>
+                            </Microsoft_Windows_Themes:ButtonChrome>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="sync:SkinStorage.EnableTouch" Value="true">
+                                    <Setter Property="Data" Value="M 0 0 L 7 7 L 14 0 Z" TargetName="Arrow" />
+                                    <Setter Property="RenderMouseOver" TargetName="Chrome" Value="false" />
+                                    <Setter Property="Margin" TargetName="dropdownbutton" Value="0,0,10,0" />
+                                    <Setter Property="Effect" TargetName="Chrome">
+                                        <Setter.Value>
+                                            <DropShadowEffect Direction="315" ShadowDepth="2" Opacity="0.3" />
+                                        </Setter.Value>
+                                    </Setter>
+                                </Trigger>
+                                <Trigger Property="IsEnabled" Value="false">
+                                    <Setter Property="Fill" TargetName="Arrow" Value="#AFAFAF" />
+                                </Trigger>
+                                <Trigger Property="IsMouseOver" Value="true">
+                                    <Setter Property="Opacity" TargetName="Chrome" Value="0.8"/>
+                                </Trigger>
+                                <Trigger Property="IsChecked" Value="true">
+                                    <Setter Property="Opacity" TargetName="Chrome" Value="0.8"/>
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="true">
+                                    <Setter Property="Opacity" TargetName="Chrome" Value="0.8"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Style TargetType="{x:Type sync:ComboBoxAdv}">
+                <Setter Property="FocusVisualStyle" Value="{StaticResource ComboBoxFocusVisual}" />
+                <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" />
+                <Setter Property="Background" Value="{StaticResource ButtonNormalBackground}" />
+                <Setter Property="BorderBrush" Value="{StaticResource ButtonNormalBorder}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
+                <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+                <Setter Property="Padding" Value="4,3" />
+                <Setter Property="ScrollViewer.CanContentScroll" Value="true"/>
+                <Setter Property="Stylus.IsFlicksEnabled" Value="False" />
+                <Setter Property="VerticalContentAlignment" Value="Center" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type sync:ComboBoxAdv}">
+                            <Grid>
+                                <Grid x:Name="MainGrid" SnapsToDevicePixels="true">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition MinWidth="{DynamicResource {x:Static SystemParameters.VerticalScrollBarWidthKey}}" Width="0" />
+                                    </Grid.ColumnDefinitions>
+                                    <Popup x:Name="PART_Popup" AllowsTransparency="true" Grid.ColumnSpan="2" StaysOpen="False" IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}" Margin="1" PopupAnimation="{DynamicResource {x:Static SystemParameters.ComboBoxPopupAnimationKey}}" Placement="Bottom">
+                                        <Microsoft_Windows_Themes:SystemDropShadowChrome x:Name="Shdw" Color="#71000000" Margin="0,0,5,5" MaxHeight="{TemplateBinding MaxDropDownHeight}" MinWidth="{Binding ActualWidth, ElementName=MainGrid}">
+                                            <Border x:Name="DropDownBorder" BorderBrush="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" BorderThickness="1" Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}">
+                                                <Grid>
+                                                    <Grid x:Name="Item_Presenter" Visibility="{TemplateBinding DropDownContentTemplate, Converter={StaticResource dropDownTemplateConvertor}, ConverterParameter='Item_Presenter'}">
+                                                        <Grid.RowDefinitions>
+                                                            <RowDefinition Height="*" />
+                                                            <RowDefinition Height="Auto" />
+                                                        </Grid.RowDefinitions>
+                                                        <ScrollViewer x:Name="DropDownScrollViewer">
+                                                            <Grid>
+                                                                <Canvas HorizontalAlignment="Left" Height="0" VerticalAlignment="Top" Width="0">
+                                                                    <Rectangle x:Name="OpaqueRect" Fill="{Binding Background, ElementName=DropDownBorder}" Height="{Binding ActualHeight, ElementName=DropDownBorder}" Width="{Binding ActualWidth, ElementName=DropDownBorder}" />
+                                                                </Canvas>
+                                                                <ItemsPresenter x:Name="ItemsPresenter" KeyboardNavigation.DirectionalNavigation="Contained" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                                                <TextBlock x:Name="No_Records" 
+                                                               Text="{sync:SharedLocalizationResourceExtension ResourceName=NoRecords}"
+                                                               Focusable="False"
+                                                               Padding="3"                                                               
+                                                               Background="{Binding Background, ElementName=DropDownBorder}"
+                                                               Visibility="Collapsed"/>
+                                                            </Grid>
+                                                        </ScrollViewer>
+                                                    </Grid>
+                                                    <ContentControl x:Name="Content_Control" Visibility="{TemplateBinding DropDownContentTemplate, Converter={StaticResource dropDownTemplateConvertor}, ConverterParameter='Content_Control'}" ContentTemplate="{TemplateBinding DropDownContentTemplate}" ></ContentControl>
+                                                </Grid>
+                                            </Border>
+                                        </Microsoft_Windows_Themes:SystemDropShadowChrome>
+                                    </Popup>
+                                    <ToggleButton x:Name="PART_ToggleButton" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}" Background="{TemplateBinding Background}" Grid.ColumnSpan="2"  IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}" Style="{StaticResource ComboBoxReadonlyToggleButton1}" />
+                                    <ContentPresenter x:Name="ContentPresenter" ContentTemplate="{TemplateBinding SelectionBoxTemplate}" ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}" Content="{TemplateBinding SelectionBoxItem}" ContentStringFormat="{TemplateBinding SelectionBoxItemStringFormat}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" IsHitTestVisible="false" Margin="{TemplateBinding Padding}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                                    <TextBlock Text="{TemplateBinding DefaultText}" x:Name="PART_DefaultText" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" IsHitTestVisible="false" Margin="{TemplateBinding Padding}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}" Opacity="0.5" />
+                                    <TextBox  x:Name="PART_Editable" Visibility="Collapsed" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"  IsReadOnly="{Binding IsReadOnly, RelativeSource={RelativeSource TemplatedParent}}" Margin="1" BorderThickness="0" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                    <TextBox  x:Name="PART_IsEditDefaultText" Text="{TemplateBinding DefaultText}" Visibility="Collapsed" Opacity="0.5"  HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                </Grid>
+                            </Grid>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsGrouping" Value="true">
+                                    <Setter Property="ScrollViewer.CanContentScroll" Value="false" />
+                                </Trigger>
+                                <Trigger Property="IsEditable" Value="True">
+                                    <Setter TargetName="PART_Editable" Property="Visibility" Value="Visible" />
+                                    <Setter TargetName="PART_DefaultText" Property="Visibility" Value="Collapsed" />
+                                    <Setter TargetName="PART_IsEditDefaultText" Property="Visibility" Value="Visible" />
+                                    <Setter TargetName="ContentPresenter" Property="Visibility" Value="Collapsed" />
+                                </Trigger>
+                                <MultiDataTrigger>
+                                    <MultiDataTrigger.Conditions>
+                                        <Condition Binding="{Binding Path=HasItems, RelativeSource={RelativeSource Self}}" Value="false"></Condition>
+                                        <Condition Binding="{Binding Path=AutoCompleteMode,RelativeSource={RelativeSource Self}}" Value="Suggest"></Condition>
+                                    </MultiDataTrigger.Conditions>
+                                    <Setter Property="Height" TargetName="DropDownBorder" Value="{Binding Height, ElementName=No_Records}" />
+                                </MultiDataTrigger>
+                                <MultiDataTrigger>
+                                    <MultiDataTrigger.Conditions>
+                                        <Condition Binding="{Binding Path=HasItems,RelativeSource={RelativeSource Self}}" Value="false"></Condition>
+                                        <Condition Binding="{Binding Path=AutoCompleteMode,RelativeSource={RelativeSource Self}}" Value="None"></Condition>
+                                    </MultiDataTrigger.Conditions>
+                                    <Setter Property="Height" TargetName="DropDownBorder" Value="95" />
+                                </MultiDataTrigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="ItemsPanel">
+                    <Setter.Value>
+                        <ItemsPanelTemplate>
+                            <VirtualizingStackPanel VirtualizingStackPanel.VirtualizationMode="Recycling"/>
+                        </ItemsPanelTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Style.Triggers>
+                    <Trigger Property="sync:SkinStorage.EnableTouch" Value="true">
+                        <Setter Property="FontSize" Value="18" />
+                        <Setter Property="Padding" Value="16,10,23,10" />
+                    </Trigger>
+                    <Trigger Property="IsEditable" Value="True">
+                        <Setter Property="AllowMultiSelect" Value="False" />
+                    </Trigger>
+                    <Trigger Property="AllowMultiSelect" Value="True">
+                        <Setter Property="Template" Value="{StaticResource MultiSelectTemplate}" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid ClipToBounds="True" UseLayoutRounding="True">
+        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="200"/>
+            <RowDefinition Height="405"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <!-- Main Group Box -->
+        <GroupBox Grid.Row="0"
+                  x:Name="MainGroupBox"
+                  BorderBrush="{DynamicResource Control}"
+                  BorderThickness="3"
+                  Margin="20,20,20,0"
+                  IsEnabledChanged="MainGroupBox_IsEnabledChanged">
+            
+            <GroupBox.Header>
+                <Label Content="Main"
+                       FontSize="20"
+                       Foreground="{DynamicResource Text}"
+                       FontFamily="{StaticResource OpenSans}"
+                       FontWeight="Bold"
+                       Padding="2"/>
+            </GroupBox.Header>
+
+            <Grid Margin="-10,10,15,10" ClipToBounds="True" UseLayoutRounding="True">
+                
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                
+                <TextBox x:Name="LinkTextBox"
+                         Grid.Row="0"
+                         Grid.Column="0" Grid.ColumnSpan="10"
+                         BorderThickness="0"
+                         adorners:Watermark.VisibleWhen="EmptyAndNotKeyboardFocused"
+                         adorners:Watermark.Text="Enter link here"
+                         adorners:Watermark.TextStyle="{StaticResource AdornerTextStyle}"
+                         Foreground="{DynamicResource Text}"
+                         Background="{DynamicResource Control}"
+                         FontFamily="{StaticResource OpenSans}"
+                         FontWeight="SemiBold"
+                         FontSize="20"
+                         FontStyle="Normal"
+                         Margin="0,5,0,5"
+                         Padding="5"
+                         IsKeyboardFocusedChanged="LinkTextBox_IsKeyboardFocusedChanged">
+                    
+                    <TextBox.Resources>
+                        <Style TargetType="{x:Type Border}">
+                            <Setter Property="CornerRadius"
+                                    Value="7.5"/>
+                        </Style>
+                    </TextBox.Resources>
+                </TextBox>
+
+                <Button x:Name="SearchBtn"
+                        Style="{StaticResource ButtonStyle}"
+                        Grid.Row="1"
+                        Grid.Column="0"
+                        BorderThickness="0"
+                        Background="{DynamicResource Button}"
+                        Height="60"
+                        HorizontalAlignment="Left"
+                        Margin="0,15,0,0"
+                        Padding="30,0,30,0"
+                        Content="Search"
+                        FontFamily="{StaticResource OpenSans}"
+                        FontWeight="Bold"
+                        FontSize="30"
+                        Foreground="{DynamicResource Text}"
+                        Click="SearchBtn_Click">
+                    
+                    <Button.Resources>
+                        <Style TargetType="{x:Type Border}">
+                            <Setter Property="CornerRadius"
+                                    Value="7.5"/>
+                        </Style>
+                    </Button.Resources>
+                </Button>
+
+                <Button Style="{StaticResource ButtonStyle}"
+                        Grid.Row="1"
+                        Grid.Column="4"
+                        BorderThickness="0"
+                        Height="50"
+                        Width="50"
+                        Margin="0,15,15,0"
+                        Padding="7.5"
+                        Background="{DynamicResource Button}"
+                        HorizontalContentAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        Click="BlyZeLogoBtn_Click">
+
+                    <Image x:Name="BlyZeLogoImage"
+                           Stretch="Uniform"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Center"/>
+
+                    <Button.Resources>
+                        <Style TargetType="{x:Type Border}">
+                            <Setter Property="CornerRadius"
+                                    Value="7.5"/>
+                        </Style>
+                    </Button.Resources>
+                </Button>
+
+                <Button x:Name="StartBtn"
+                        Style="{StaticResource ButtonStyle}"
+                        Grid.Row="1"
+                        Grid.Column="5"
+                        BorderThickness="0"
+                        Background="{DynamicResource Button}"
+                        Height="60"
+                        HorizontalAlignment="Right"
+                        Margin="0,15,0,0"
+                        Padding="30,0,30,0"
+                        Content="Start"
+                        FontFamily="{StaticResource OpenSans}"
+                        FontWeight="Bold"
+                        FontSize="30"
+                        Foreground="{DynamicResource Text}"
+                        Click="StartBtn_Click">
+                    
+                    <Button.Resources>
+                        <Style TargetType="{x:Type Border}">
+                            <Setter Property="CornerRadius"
+                                    Value="7.5"/>
+                        </Style>
+                    </Button.Resources>
+                </Button>
+
+                <Button x:Name="BackgroundImageBtn"
+                        Style="{StaticResource ButtonStyle}"
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        BorderThickness="0"
+                        Height="60"
+                        Width="75"
+                        Margin="15,15,0,0"
+                        Padding="7.5"
+                        Background="{DynamicResource Button}"
+                        ToolTipService.HasDropShadow="True"
+                        ToolTipService.ShowOnDisabled="False"
+                        ToolTip="Right-Click to delete the current background"
+                        Click="BackgroundImageBtn_Click"
+                        MouseRightButtonDown="BackgroundImageBtn_MouseRightButtonDown">
+
+                    <Image x:Name="BackgroundImageBtnImage"
+                           Stretch="Uniform"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Center"/>
+
+                    <Button.Resources>
+                        <Style TargetType="{x:Type Border}">
+                            <Setter Property="CornerRadius"
+                                    Value="7.5"/>
+                        </Style>
+                    </Button.Resources>
+                </Button>
+
+                <TextBox x:Name="ThemeComboBoxOverlay"
+                         BorderThickness="0"
+                         Grid.Row="1"
+                         Grid.Column="2"
+                         Margin="15,15,0,0"
+                         Height="35"
+                         Width="150"
+                         Background="{DynamicResource Control}">
+
+                    <TextBox.Resources>
+                        <Style TargetType="{x:Type Border}">
+                            <Setter Property="CornerRadius"
+                                    Value="5"/>
+                        </Style>
+                    </TextBox.Resources>
+                </TextBox>
+
+                <sync:ComboBoxAdv x:Name="ThemeComboBox"
+                                  BorderThickness="0"
+                                  Grid.Row="1"
+                                  Grid.Column="2"
+                                  Margin="15,15,0,0"
+                                  Height="35"
+                                  Width="150"
+                                  FontFamily="{StaticResource OpenSans}"
+                                  Background="{DynamicResource Control}"
+                                  Foreground="{DynamicResource Text}"
+                                  FontWeight="SemiBold"
+                                  FontSize="20"
+                                  Padding="0"
+                                  HorizontalContentAlignment="Center"
+                                  VerticalContentAlignment="Center"
+                                  ToolTipService.HasDropShadow="True"
+                                  ToolTipService.ShowOnDisabled="False"
+                                  ToolTip="Right-Click to open the Theme Creator"
+                                  DropDownClosed="ThemeComboBox_DropDownClosed"
+                                  MouseRightButtonDown="ThemeComboBox_MouseRightButtonDown">
+
+                    <sync:ComboBoxItemAdv Content="Standard"
+                                          BorderThickness="2"
+                                          BorderBrush="{DynamicResource Text}"
+                                          Foreground="{DynamicResource Text}"
+                                          Background="{DynamicResource Control}"/>
+                    <sync:ComboBoxItemAdv Content="Dark"
+                                          BorderThickness="2,0,2,0"
+                                          BorderBrush="{DynamicResource Text}"
+                                          Foreground="{DynamicResource Text}"
+                                          Background="{DynamicResource Control}"/>
+                    <sync:ComboBoxItemAdv Content="Light"
+                                          BorderThickness="2,2,2,2"
+                                          BorderBrush="{DynamicResource Text}"
+                                          Foreground="{DynamicResource Text}"
+                                          Background="{DynamicResource Control}"/>
+                    <sync:ComboBoxItemAdv Content="Neon"
+                                          BorderThickness="2,0,2,0"
+                                          BorderBrush="{DynamicResource Text}"
+                                          Foreground="{DynamicResource Text}"
+                                          Background="{DynamicResource Control}"/>
+                    <sync:ComboBoxItemAdv Content="Custom"
+                                          BorderThickness="2"
+                                          BorderBrush="{DynamicResource Text}"
+                                          Foreground="{DynamicResource Text}"
+                                          Background="{DynamicResource Control}"/>
+                </sync:ComboBoxAdv>
+            </Grid>
+        </GroupBox>
+        
+        <!-- Video Details Group Box-->
+        <GroupBox Grid.Row="1"
+                  x:Name="VideoDetailsGroupBox"
+                  BorderBrush="{DynamicResource Control}"
+                  BorderThickness="3"
+                  Margin="20,20,20,0"
+                  IsEnabledChanged="VideoDetailsGroupBox_IsEnabledChanged">
+            
+            <GroupBox.Header>
+                <Label Content="Video Details"
+                       FontSize="20"
+                       Foreground="{DynamicResource Text}"
+                       FontFamily="{StaticResource OpenSans}"
+                       FontWeight="Bold"
+                       Padding="2"/>
+            </GroupBox.Header>
+            
+            <Grid Margin="-10,10,15,10" ClipToBounds="True" UseLayoutRounding="True">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="150"/>
+                    <ColumnDefinition Width="150"/>
+                    <ColumnDefinition Width="160"/>
+                    <ColumnDefinition Width="200"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <Label Content="Title"
+                       Grid.Row="0"
+                       Grid.Column="0"
+                       FontSize="20"
+                       Foreground="{DynamicResource Text}"
+                       FontFamily="{StaticResource OpenSans}"
+                       FontWeight="Bold"
+                       Margin="0,20,0,0"/>
+                
+                <TextBox x:Name="TitleTextBox"
+                         Grid.Row="0"
+                         Grid.Column="1" Grid.ColumnSpan="4"
+                         Height="35"
+                         BorderThickness="0"
+                         Foreground="{DynamicResource Text}"
+                         Background="{DynamicResource Control}"
+                         FontFamily="{StaticResource OpenSans}"
+                         FontWeight="SemiBold"
+                         FontSize="20"
+                         FontStyle="Normal"
+                         Margin="-85,-75,20,0"
+                         Padding="5">
+                    
+                    <TextBox.Resources>
+                        <Style TargetType="{x:Type Border}">
+                            <Setter Property="CornerRadius"
+                                    Value="7.5"/>
+                        </Style>
+                    </TextBox.Resources>
+                </TextBox>
+
+                <Label Content="Video Quality"
+                       Grid.Row="1"
+                       Grid.Column="0"
+                       FontSize="20"
+                       Foreground="{DynamicResource Text}"
+                       FontFamily="{StaticResource OpenSans}"
+                       FontWeight="Bold"
+                       Margin="0,-43,0,0"/>
+
+                <TextBox x:Name="VideoQualityComboBoxOverlay"
+                         BorderThickness="0"
+                         Grid.Row="1"
+                         Grid.Column="1"
+                         Margin="0,-150,0,0"
+                         Height="35"
+                         Width="150"
+                         Background="{DynamicResource Control}"
+                         HorizontalContentAlignment="Center"
+                         VerticalContentAlignment="Top">
+                    
+                    <TextBox.Resources>
+                        <Style TargetType="{x:Type Border}">
+                            <Setter Property="CornerRadius"
+                                    Value="5"/>
+                        </Style>
+                    </TextBox.Resources>
+                </TextBox>
+
+                <sync:ComboBoxAdv x:Name="VideoQualityComboBox"
+                                  BorderThickness="0"
+                                  Grid.Row="1"
+                                  Grid.Column="1"
+                                  Margin="0,-150,0,0"
+                                  Height="35"
+                                  Width="150"
+                                  FontFamily="{StaticResource OpenSans}"
+                                  Background="{DynamicResource Control}"
+                                  Foreground="{DynamicResource Text}"
+                                  FontWeight="SemiBold"
+                                  FontSize="20"
+                                  Padding="0"
+                                  HorizontalContentAlignment="Center"
+                                  VerticalContentAlignment="Center"/>
+
+                <Label Content="Audio Quality"
+                       Grid.Row="1"
+                       Grid.Column="2"
+                       FontSize="20"
+                       Foreground="{DynamicResource Text}"
+                       FontFamily="{StaticResource OpenSans}"
+                       FontWeight="Bold"
+                       Margin="15,-43,0,0"/>
+
+                <TextBox x:Name="AudioQualityComboBoxOverlay"
+                         BorderThickness="0"
+                         Grid.Row="1"
+                         Grid.Column="3"
+                         Margin="-35,-150,0,0"
+                         Height="35"
+                         Width="150"
+                         Background="{DynamicResource Control}"
+                         HorizontalContentAlignment="Center"
+                         VerticalContentAlignment="Center">
+                    
+                    <TextBox.Resources>
+                        <Style TargetType="{x:Type Border}">
+                            <Setter Property="CornerRadius"
+                                    Value="5"/>
+                        </Style>
+                    </TextBox.Resources>
+                </TextBox>
+
+                <sync:ComboBoxAdv x:Name="AudioQualityComboBox"
+                                  BorderThickness="0"
+                                  Grid.Row="1"
+                                  Grid.Column="3"
+                                  Margin="-35,-150,0,0"
+                                  Height="35"
+                                  Width="150"
+                                  FontFamily="{StaticResource OpenSans}"
+                                  Background="{DynamicResource Control}"
+                                  Foreground="{DynamicResource Text}"
+                                  FontWeight="SemiBold"
+                                  FontSize="20"
+                                  Padding="0"
+                                  HorizontalContentAlignment="Center"
+                                  VerticalContentAlignment="Center"/>
+
+                <Button Style="{StaticResource ButtonStyle}"
+                        Grid.Row="1"
+                        Grid.Column="4"
+                        BorderThickness="0"
+                        Height="55"
+                        Width="55"
+                        Margin="-50,-150,0,0"
+                        Padding="7.5"
+                        Background="{DynamicResource Button}"
+                        HorizontalContentAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        ToolTipService.HasDropShadow="True"
+                        ToolTipService.ShowOnDisabled="False"
+                        ToolTip="Click to open the video information"
+                        Click="VideoInfoButton_Click">
+
+                    <Image x:Name="VideoInfoImage"
+                           Stretch="Uniform"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Center"/>
+
+                    <Button.Resources>
+                        <Style TargetType="{x:Type Border}">
+                            <Setter Property="CornerRadius"
+                                    Value="7.5"/>
+                        </Style>
+                    </Button.Resources>
+                </Button>
+
+                <Border Grid.Row="0"
+                        Grid.RowSpan="2"
+                        Grid.Column="5"
+                        Grid.ColumnSpan="5"
+                        BorderThickness="8"
+                        CornerRadius="5"
+                        Height="240"
+                        Width="426"
+                        Padding="0"
+                        BorderBrush="{DynamicResource Control}"
+                        ClipToBounds="True">
+
+                    <Image Name="ThumbnailImageBox"
+                           Stretch="UniformToFill"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Center"
+                           Cursor="Hand"
+                           ToolTipService.HasDropShadow="True"
+                           ToolTipService.ShowOnDisabled="False"
+                           ToolTip="Click to download the thumbnail in the best possible resolution"
+                           ClipToBounds="True"
+                           MouseLeftButtonDown="ThumbnailImageBox_MouseLeftButtonDown"/>
+
+                </Border>
+
+                <Label Content="Save to"
+                       Grid.Row="2"
+                       Grid.Column="0"
+                       FontSize="20"
+                       Foreground="{DynamicResource Text}"
+                       FontFamily="{StaticResource OpenSans}"
+                       FontWeight="Bold"
+                       Margin="0,-53,0,0"/>
+
+                <TextBox x:Name="DownloadPathTextBox"
+                         Grid.Row="2"
+                         Grid.Column="1" Grid.ColumnSpan="4"
+                         BorderThickness="0"
+                         Height="35"
+                         Foreground="{DynamicResource Text}"
+                         Background="{DynamicResource Control}"
+                         FontFamily="{StaticResource OpenSans}"
+                         FontWeight="SemiBold"
+                         FontSize="20"
+                         FontStyle="Normal"
+                         Margin="-55,-75,20,0"
+                         Padding="5"
+                         ToolTipService.HasDropShadow="True"
+                         ToolTipService.ShowOnDisabled="False"
+                         ToolTip="Double-Click to open the Explorer"
+                         MouseDoubleClick="DownloadPathTextBox_MouseDoubleClick">
+                    
+                    <TextBox.Resources>
+                        <Style TargetType="{x:Type Border}">
+                            <Setter Property="CornerRadius"
+                                    Value="7.5"/>
+                        </Style>
+                    </TextBox.Resources>
+                </TextBox>
+
+                <Label Content="Start time"
+                       Grid.Row="3"
+                       Grid.Column="0"
+                       FontSize="20"
+                       Foreground="{DynamicResource Text}"
+                       FontFamily="{StaticResource OpenSans}"
+                       FontWeight="Bold"
+                       Margin="0,34,0,0"/>
+
+                <Border Grid.Row="3"
+                        Grid.Column="1"
+                        CornerRadius="5"
+                        BorderBrush="{DynamicResource Control}"
+                        Background="{DynamicResource Control}"
+                        BorderThickness="3"
+                        Height="35"
+                        Width="150"
+                        Margin="-66,14,0,0">
+
+                    <sync:SfMaskedEdit x:Name="StartTimeMaskBox"
+                                       Height="30"
+                                       Width="145"
+                                       adorners:Watermark.Text="__:__:__"
+                                       adorners:Watermark.TextStyle="{StaticResource AdornerTextStyle2}"
+                                       adorners:Watermark.VisibleWhen="EmptyAndNotKeyboardFocused"
+                                       ValidationMode="KeyPress"
+                                       MaskType="RegEx"
+                                       Mask="\d{2}:[012345]\d:[012345]\d"
+                                       FontFamily="{StaticResource OpenSans}"
+                                       Background="{DynamicResource Control}"
+                                       Foreground="{DynamicResource Text}"
+                                       SelectionBrush="{DynamicResource Text}"
+                                       BorderThickness="0"
+                                       FontWeight="SemiBold"
+                                       FontSize="20"
+                                       FontStyle="Normal"
+                                       TextAlignment="Center"
+                                       VerticalContentAlignment="Center">
+                    </sync:SfMaskedEdit>
+                </Border>
+
+                <Label Content="End time"
+                       Grid.Row="3"
+                       Grid.Column="2"
+                       FontSize="20"
+                       Foreground="{DynamicResource Text}"
+                       FontFamily="{StaticResource OpenSans}"
+                       FontWeight="Bold"
+                       Margin="-18,34,0,0"/>
+
+                <Border Grid.Row="3"
+                        Grid.Column="3"
+                        CornerRadius="5"
+                        BorderBrush="{DynamicResource Control}"
+                        Background="{DynamicResource Control}"
+                        BorderThickness="3"
+                        Height="35"
+                        Width="150"
+                        Margin="-190,14,0,0">
+
+                    <sync:SfMaskedEdit x:Name="EndTimeMaskBox"
+                                       Height="30"
+                                       Width="145"
+                                       adorners:Watermark.Text="__:__:__"
+                                       adorners:Watermark.TextStyle="{StaticResource AdornerTextStyle2}"
+                                       adorners:Watermark.VisibleWhen="EmptyAndNotKeyboardFocused"
+                                       ValidationMode="KeyPress"
+                                       MaskType="RegEx"
+                                       Mask="\d{2}:[012345]\d:[012345]\d"
+                                       FontFamily="{StaticResource OpenSans}"
+                                       Background="{DynamicResource Control}"
+                                       Foreground="{DynamicResource Text}"
+                                       SelectionBrush="{DynamicResource Text}"
+                                       BorderThickness="0"
+                                       FontWeight="SemiBold"
+                                       FontSize="20"
+                                       FontStyle="Normal"
+                                       TextAlignment="Center"
+                                       VerticalContentAlignment="Center">
+                    </sync:SfMaskedEdit>
+                </Border>
+
+                <CheckBox x:Name="SoundOnlyCheckBox"
+                          Grid.Row="3"
+                          Grid.Column="5"
+                          VerticalAlignment="Center"
+                          HorizontalAlignment="Left"
+                          BorderThickness="0"
+                          Background="{DynamicResource Control}"
+                          Foreground="{DynamicResource Text}"
+                          Margin="0,15,0,0">
+                    
+                    <CheckBox.LayoutTransform>
+                        <ScaleTransform ScaleX="2.2" ScaleY="2.2"/>
+                    </CheckBox.LayoutTransform>
+                    
+                    <CheckBox.Resources>
+                        <Style TargetType="{x:Type Border}">
+                            <Setter Property="CornerRadius" Value="3"/>
+                        </Style>
+                    </CheckBox.Resources>
+                </CheckBox>
+
+                <Label Content="Sound Only"
+                       Grid.Row="3"
+                       Grid.Column="5"
+                       FontSize="25"
+                       Foreground="{DynamicResource Text}"
+                       FontFamily="{StaticResource OpenSans}"
+                       FontWeight="Bold"
+                       Margin="5,30,0,0"
+                       HorizontalAlignment="Right"/>
+
+                <Button x:Name="DownloadBtn"
+                        Style="{StaticResource ButtonStyle}"
+                        Grid.Row="3"
+                        Grid.Column="6"
+                        BorderThickness="0"
+                        Background="{DynamicResource Button}"
+                        Height="70"
+                        HorizontalAlignment="Right"
+                        Margin="0,15,0,0"
+                        Padding="30,0,30,0"
+                        Content="Download"
+                        FontFamily="{StaticResource OpenSans}"
+                        FontWeight="Bold"
+                        FontSize="30"
+                        Foreground="{DynamicResource Text}"
+                        Click="DownloadBtn_Click">
+
+                    <Button.Resources>
+                        <Style TargetType="{x:Type Border}">
+                            <Setter Property="CornerRadius"
+                                    Value="7.5"/>
+                        </Style>
+                    </Button.Resources>
+                </Button>
+            </Grid>
+        </GroupBox>
+
+        <!-- Progress Bar -->
+        <sync:SfLinearProgressBar Grid.Row="2"
+                                  x:Name="DownloadProgressBar"
+                                  Margin="20,17.5,20,20"
+                                  Minimum="0"
+                                  Maximum="100"
+                                  BorderThickness="0"
+                                  Height="40"
+                                  IndicatorCornerRadius="7.5"
+                                  TrackColor="{DynamicResource Control}"
+                                  ProgressColor="{DynamicResource Button}">
+        </sync:SfLinearProgressBar>
+        
+        <TextBlock x:Name="DownloadProgressLabel"
+                   Grid.Row="2"
+                   Text="{Binding ElementName=DownloadProgressBar, Path=Progress, StringFormat={}{0:0}%}"
+                   FontSize="20"
+                   FontFamily="{StaticResource OpenSans}"
+                   FontWeight="SemiBold"
+                   Margin="30,0,0,1.5"
+                   HorizontalAlignment="Left"
+                   VerticalAlignment="Center"
+                   Foreground="{DynamicResource Text}"/>
+    </Grid>
+</Window>

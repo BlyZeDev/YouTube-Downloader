@@ -1,0 +1,196 @@
+﻿<Window x:Class="YouTubeDownloaderV2.SearchWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:adorners="http://gu.se/Adorners"
+        Title="YouTube Downloader - Video Search"
+        Height="700" Width="500"
+        Icon="icon.ico"
+        WindowStyle="ThreeDBorderWindow"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterScreen"
+        Background="{DynamicResource Background}"
+        Closed="Window_Closed">
+
+    <Grid ClipToBounds="True" UseLayoutRounding="True">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <TextBox x:Name="SearchTextBox"
+                 Grid.Row="0"
+                 BorderThickness="0"
+                 Height="35"
+                 Width="335"
+                 HorizontalAlignment="Left"
+                 adorners:Watermark.VisibleWhen="EmptyAndNotKeyboardFocused"
+                 adorners:Watermark.Text="Enter search here"
+                 adorners:Watermark.TextStyle="{StaticResource AdornerTextStyle}"
+                 Foreground="{DynamicResource Text}"
+                 Background="{DynamicResource Control}"
+                 FontFamily="{StaticResource OpenSans}"
+                 FontWeight="SemiBold"
+                 FontSize="20"
+                 FontStyle="Normal"
+                 Margin="10,10,0,0"
+                 Padding="5"
+                 IsTabStop="False"
+                 IsKeyboardFocusedChanged="SearchTextBox_IsKeyboardFocusedChanged">
+
+            <TextBox.Resources>
+                <Style TargetType="{x:Type Border}">
+                    <Setter Property="CornerRadius"
+                            Value="7.5"/>
+                </Style>
+            </TextBox.Resources>
+        </TextBox>
+
+        <Button x:Name="SearchBtn"
+                Style="{StaticResource ButtonStyle}"
+                Grid.Row="0"
+                BorderThickness="0"
+                HorizontalAlignment="Right"
+                Background="{DynamicResource Button}"
+                Height="50"
+                Margin="0,10,10,0"
+                Padding="20,0,20,0"
+                Content="Search"
+                FontFamily="{StaticResource OpenSans}"
+                FontWeight="Bold"
+                FontSize="25"
+                Foreground="{DynamicResource Text}"
+                IsTabStop="False"
+                Click="SearchBtn_Click">
+
+            <Button.Resources>
+                <Style TargetType="{x:Type Border}">
+                    <Setter Property="CornerRadius"
+                                    Value="7.5"/>
+                </Style>
+            </Button.Resources>
+        </Button>
+
+        <ListBox x:Name="SearchResultsListBox"
+                 Grid.Row="1"
+                 Margin="10"
+                 Background="{DynamicResource Background}"
+                 BorderThickness="0"
+                 SelectionMode="Single"
+                 SelectionChanged="SearchResultsListBox_SelectionChanged"
+                 ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                 ScrollViewer.CanContentScroll="True"
+                 ScrollViewer.ScrollChanged="SearchResultsListBox_ScrollChanged"
+                 IsTabStop="False">
+
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="{x:Type ListBoxItem}">
+                    <Setter Property="Background" Value="Transparent"/>
+                    <Setter Property="HorizontalContentAlignment" Value="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
+                    <Setter Property="VerticalContentAlignment" Value="{Binding VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
+                    <Setter Property="Padding" Value="0"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                                <Border x:Name="Bd" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="true">
+                                    <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsSelected" Value="true">
+                                        <Setter Property="Background" TargetName="Bd" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
+                                        <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}"/>
+                                    </Trigger>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="{DynamicResource Button}"/>
+                                    </Trigger>
+                                    <MultiTrigger>
+                                        <MultiTrigger.Conditions>
+                                            <Condition Property="IsSelected" Value="true"/>
+                                            <Condition Property="Selector.IsSelectionActive" Value="false"/>
+                                        </MultiTrigger.Conditions>
+                                        <Setter Property="Background" TargetName="Bd" Value="{DynamicResource {x:Static SystemColors.InactiveSelectionHighlightBrushKey}}"/>
+                                        <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}}"/>
+                                    </MultiTrigger>
+                                    <Trigger Property="IsEnabled" Value="false">
+                                        <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                    <Style.Resources>
+                        <Style TargetType="{x:Type Border}">
+                            <Setter Property="CornerRadius" Value="5"/>
+                        </Style>
+                    </Style.Resources>
+                </Style>
+            </ListBox.ItemContainerStyle>
+
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Grid Height="125"
+                          Margin="2.5"
+                          UseLayoutRounding="True">
+
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="25"/>
+                        </Grid.RowDefinitions>
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Image Grid.Column="0"
+                               Grid.RowSpan="3"
+                               Stretch="Uniform"
+                               Source="{Binding ThumbnailUrl}"
+                               Height="120"
+                               Width="213"
+                               Margin="5,0,5,0"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"/>
+
+                        <Label Grid.Column="1"
+                               Grid.Row="0"
+                               Foreground="{DynamicResource Text}"
+                               FontFamily="{StaticResource OpenSans}"
+                               FontSize="15">
+                            <TextBlock Text="{Binding Title}"
+                                       TextWrapping="Wrap"
+                                       TextTrimming="CharacterEllipsis"/>
+                        </Label>
+
+                        <Label Grid.Column="1"
+                               Grid.Row="1"
+                               Foreground="{DynamicResource Text}"
+                               FontFamily="{StaticResource OpenSans}"
+                               FontWeight="SemiBold"
+                               FontSize="15"
+                               Margin="0,0,0,-4">
+                            <TextBlock Text="{Binding ChannelName}"
+                                       TextWrapping="NoWrap"
+                                       TextTrimming="CharacterEllipsis"/>
+                        </Label>
+
+                        <Label Grid.Column="1"
+                               Grid.Row="2"
+                               Foreground="{DynamicResource Text}"
+                               FontFamily="{StaticResource OpenSans}"
+                               FontWeight="SemiBold"
+                               FontSize="15"
+                               Margin="0,-2,0,0">
+                            <TextBlock Text="{Binding Duration}"
+                                       TextWrapping="NoWrap"
+                                       TextTrimming="CharacterEllipsis"/>
+                        </Label>
+
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </Grid>
+</Window>
