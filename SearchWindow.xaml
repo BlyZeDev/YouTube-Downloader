@@ -66,7 +66,7 @@
             <Button.Resources>
                 <Style TargetType="{x:Type Border}">
                     <Setter Property="CornerRadius"
-                                    Value="7.5"/>
+                            Value="7.5"/>
                 </Style>
             </Button.Resources>
         </Button>
