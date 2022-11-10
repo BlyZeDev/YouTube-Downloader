@@ -364,11 +364,9 @@ public sealed partial class MainWindow : Window
             return;
         }
 
-        bool downloadFullVideo;
         TimeSpan starttime = TimeSpan.Zero, endtime = TimeSpan.Zero;
 
-        if (StartTimeMaskBox.IsEmpty() && EndTimeMaskBox.IsEmpty()) downloadFullVideo = true;
-        else
+        if (!(StartTimeMaskBox.IsEmpty() && EndTimeMaskBox.IsEmpty()))
         {
             if (StartTimeMaskBox.Text.Contains('_') || EndTimeMaskBox.Text.Contains('_'))
             {
@@ -395,10 +393,7 @@ public sealed partial class MainWindow : Window
                 SetGroupBoxesState(true);
                 return;
             }
-
-            if (starttime == TimeSpan.Zero && endtime == CurrentVideo.Duration) downloadFullVideo = true;
-            else downloadFullVideo = false;
-        }        
+        }
 
         var downloadLocation = Path.Combine(DownloadPathTextBox.Text, TitleTextBox.Text);
 
@@ -407,33 +402,17 @@ public sealed partial class MainWindow : Window
         TaskbarInfo.ProgressState = System.Windows.Shell.TaskbarItemProgressState.Indeterminate;
         DownloadProgressBar.IsIndeterminate = true;
 
-        bool wasDownloadedSuccessfully;
-
-        if (downloadFullVideo)
-        {
-            wasDownloadedSuccessfully = await _client.DownloadVideoAsync(
-                CurrentVideo!.Url,
-                downloadLocation,
-                Convert.ToInt32(VideoQualityComboBox.Text[0..^1]),
-                Convert.ToInt32(AudioQualityComboBox.Text[0..^4]),
-                SoundOnlyCheckBox.IsChecked ?? false,
-                DownloadStartedCallback,
-                DownloadCallback,
-                DownloadCancelledCallback);
-        }
-        else
-        {
-            wasDownloadedSuccessfully = await _client.DownloadVideoAsync(
-                CurrentVideo!.Url,
-                downloadLocation,
-                Convert.ToInt32(VideoQualityComboBox.Text[0..^1]),
-                Convert.ToInt32(AudioQualityComboBox.Text[0..^4]),
-                SoundOnlyCheckBox.IsChecked ?? false,
-                starttime, endtime,
-                DownloadStartedCallback,
-                PartialDownloadCallback,
-                DownloadCancelledCallback);
-        }
+        var wasDownloadedSuccessfully = await _client.DownloadVideoAsync(
+            CurrentVideo!.Url,
+            downloadLocation,
+            Convert.ToInt32(VideoQualityComboBox.Text[0..^1]),
+            Convert.ToInt32(AudioQualityComboBox.Text[0..^4]),
+            SoundOnlyCheckBox.IsChecked ?? false,
+            starttime == TimeSpan.Zero && endtime == CurrentVideo.Duration,
+            starttime, endtime,
+            DownloadStartedCallback,
+            DownloadCallback,
+            DownloadCancelledCallback);
 
         if (wasDownloadedSuccessfully)
         {
@@ -465,13 +444,6 @@ public sealed partial class MainWindow : Window
     }
 
     private void DownloadCallback(double progress)
-    {
-        TaskbarInfo.Description = "Downloading: " + (int)(progress * 100) + '%';
-        DownloadProgressBar.Progress = progress * 100;
-        TaskbarInfo.ProgressValue = progress;
-    }
-
-    private void PartialDownloadCallback(double progress)
     {
         Dispatcher.Invoke(() =>
         {

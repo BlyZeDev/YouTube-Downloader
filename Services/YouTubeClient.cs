@@ -12,7 +12,6 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using YoutubeExplode.Common;
-using YoutubeExplode.Converter;
 using YoutubeExplode.Search;
 using YoutubeExplode.Videos;
 using YoutubeExplode.Videos.Streams;
@@ -33,17 +32,13 @@ public interface IYouTubeClient
 
     public ValueTask<bool> TryDownloadThumbnailAsync(VideoId videoId, string fullPath);
 
-    public ValueTask<bool> DownloadVideoAsync(string url, string filePathAndTitle, int resolutionHeight, int kbpsBitrate, bool onlyAudio, DownloadStartedCallback started, DownloadProgressCallback progress, DownloadCancelledCallback cancelled);
-
-    public ValueTask<bool> DownloadVideoAsync(string url, string filePathAndTitle, int resolutionHeight, int kbpsBitrate, bool onlyAudio, TimeSpan startTime, TimeSpan endTime, DownloadStartedCallback started, DownloadProgressCallback progress, DownloadCancelledCallback cancelled);
+    public ValueTask<bool> DownloadVideoAsync(string url, string filePathAndTitle, int resolutionHeight, int kbpsBitrate, bool onlyAudio, bool fullVideo, TimeSpan startTime, TimeSpan endTime, DownloadStartedCallback started, DownloadProgressCallback progress, DownloadCancelledCallback cancelled);
 
     public Task CancelDownloadIfRunning();
 }
 
 public sealed class YouTubeClient : IYouTubeClient
 {
-    private string FFmpegPath { get; } = Path.Combine(Directory.GetCurrentDirectory(), "ffmpeg.exe");
-
     private VideoClient Videos { get; }
 
     private SearchClient Search { get; }
@@ -123,63 +118,7 @@ public sealed class YouTubeClient : IYouTubeClient
         return false;
     }
 
-    public async ValueTask<bool> DownloadVideoAsync(string url, string filePathAndTitle, int resolutionHeight, int kbpsBitrate, bool onlyAudio, DownloadStartedCallback started, DownloadProgressCallback progress, DownloadCancelledCallback cancelled)
-    {
-        IsDownloading = true;
-
-        StreamManifest manifest;
-        try
-        {
-            CreateCts();
-
-            manifest = await Videos.Streams.GetManifestAsync(url, _cts.Token);
-        }
-        catch (Exception)
-        {
-            _cts.Dispose();
-
-            return false;
-        }
-
-        var videoStream = onlyAudio ? null : manifest.GetVideoOnlyStreams().First(x => x.VideoResolution.Height == resolutionHeight);
-        var audioStream = manifest.GetAudioOnlyStreams().First(x => (int)x.Bitrate.KiloBitsPerSecond == kbpsBitrate);
-
-        IStreamInfo[] fullStream;
-
-        if (videoStream is null) fullStream = new IStreamInfo[] { audioStream };
-        else fullStream = new IStreamInfo[] { videoStream, audioStream };
-
-        try
-        {
-            CreateCts();
-
-            started();
-
-            await Videos.DownloadAsync(fullStream, new ConversionRequestBuilder($"{filePathAndTitle}.{(onlyAudio ? "mp3" : "mp4")}")
-                .SetFFmpegPath(FFmpegPath).SetPreset(ConversionPreset.UltraFast).SetContainer(onlyAudio ? "mp3" : "mp4").Build(),
-                new Progress<double>(x => progress(x)), _cts.Token);
-
-            return true;
-        }
-        catch (Exception)
-        {
-            await cancelled(new string[]
-            {
-                $"{filePathAndTitle}{(onlyAudio ? ".mp3" : ".mp4")}",
-                $"{filePathAndTitle}{(onlyAudio ? ".mp3" : ".mp4")}.stream-0.tmp",
-                $"{filePathAndTitle}{(onlyAudio ? ".mp3" : ".mp4")}.stream-1.tmp"
-            });
-
-            return false;
-        }
-        finally
-        {
-            IsDownloading = false;
-            _cts.Dispose();
-        }
-    }
-
-    public async ValueTask<bool> DownloadVideoAsync(string url, string filePathAndTitle, int resolutionHeight, int kbpsBitrate, bool onlyAudio, TimeSpan startTime, TimeSpan endTime, DownloadStartedCallback started, DownloadProgressCallback progress, DownloadCancelledCallback cancelled)
+    public async ValueTask<bool> DownloadVideoAsync(string url, string filePathAndTitle, int resolutionHeight, int kbpsBitrate, bool onlyAudio, bool fullVideo, TimeSpan startTime, TimeSpan endTime, DownloadStartedCallback started, DownloadProgressCallback progress, DownloadCancelledCallback cancelled)
     {
         IsDownloading = true;
 
@@ -217,11 +156,13 @@ public sealed class YouTubeClient : IYouTubeClient
                     .FromUrlInput(new Uri(audioStream.Url))
                     .OutputToFile(filePathAndTitle + ".mp3", true, x =>
                     {
-                        x.WithArgument(new FFMpegCore.Arguments.SpeedPresetArgument(FFMpegCore.Enums.Speed.UltraFast));
-                        x.WithCustomArgument($"-ss {startTime} -t {endTime}");
+                        if (!fullVideo) x.WithCustomArgument($"-ss {startTime} -t {endTime}");
+
+                        x.WithAudioBitrate((int)audioStream.Bitrate.KiloBitsPerSecond);
                         x.WithFastStart();
                         x.UsingShortest(true);
                         x.UsingMultithreading(true);
+                        x.WithSpeedPreset(FFMpegCore.Enums.Speed.UltraFast);
                     })
                     .NotifyOnProgress(x => progress(x), endTime)
                     .CancellableThrough(_cts.Token)
@@ -236,13 +177,15 @@ public sealed class YouTubeClient : IYouTubeClient
                     .FromUrlInput(new Uri(videoStream.Url))
                     .OutputToFile(videoTemp, true, x =>
                     {
-                        x.WithArgument(new FFMpegCore.Arguments.SpeedPresetArgument(FFMpegCore.Enums.Speed.UltraFast));
-                        x.WithCustomArgument($"-ss {startTime} -t {endTime}");
+                        if (!fullVideo) x.WithCustomArgument($"-ss {startTime} -t {endTime}");
+
+                        x.WithVideoBitrate((int)videoStream.Bitrate.KiloBitsPerSecond);
                         x.WithFastStart();
                         x.UsingShortest(true);
                         x.UsingMultithreading(true);
+                        x.WithSpeedPreset(FFMpegCore.Enums.Speed.UltraFast);
                     })
-                    .NotifyOnProgress(x => progress(x), endTime)
+                    .NotifyOnProgress(x => progress(x / 2), endTime)
                     .CancellableThrough(_cts.Token)
                     .ProcessAsynchronously();
 
@@ -250,13 +193,15 @@ public sealed class YouTubeClient : IYouTubeClient
                     .FromUrlInput(new Uri(audioStream.Url))
                     .OutputToFile(audioTemp, true, x =>
                     {
-                        x.WithArgument(new FFMpegCore.Arguments.SpeedPresetArgument(FFMpegCore.Enums.Speed.UltraFast));
-                        x.WithCustomArgument($"-ss {startTime} -t {endTime}");
+                        if (!fullVideo) x.WithCustomArgument($"-ss {startTime} -t {endTime}");
+
+                        x.WithAudioBitrate((int)audioStream.Bitrate.KiloBitsPerSecond);
                         x.WithFastStart();
                         x.UsingShortest(true);
                         x.UsingMultithreading(true);
+                        x.WithSpeedPreset(FFMpegCore.Enums.Speed.UltraFast);
                     })
-                    .NotifyOnProgress(x => progress(x), endTime)
+                    .NotifyOnProgress(x => progress(x / 2 + 50), endTime)
                     .CancellableThrough(_cts.Token)
                     .ProcessAsynchronously();
 
