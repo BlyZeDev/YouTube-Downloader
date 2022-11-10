@@ -395,21 +395,17 @@ public sealed partial class MainWindow : Window
             }
         }
 
-        var downloadLocation = Path.Combine(DownloadPathTextBox.Text, TitleTextBox.Text);
-
-        downloadLocation = AddExtender(downloadLocation, (SoundOnlyCheckBox.IsChecked ?? false) ? ".mp3" : ".mp4");
-
         TaskbarInfo.ProgressState = System.Windows.Shell.TaskbarItemProgressState.Indeterminate;
         DownloadProgressBar.IsIndeterminate = true;
 
         var wasDownloadedSuccessfully = await _client.DownloadVideoAsync(
-            CurrentVideo!.Url,
-            downloadLocation,
-            Convert.ToInt32(VideoQualityComboBox.Text[0..^1]),
-            Convert.ToInt32(AudioQualityComboBox.Text[0..^4]),
-            SoundOnlyCheckBox.IsChecked ?? false,
-            starttime == TimeSpan.Zero && endtime == CurrentVideo.Duration,
-            starttime, endtime,
+            new Metadata(
+                CurrentVideo!.Url,
+                Path.Combine(DownloadPathTextBox.Text, TitleTextBox.Text),
+                Convert.ToInt32(VideoQualityComboBox.Text[0..^1]),
+                Convert.ToInt32(AudioQualityComboBox.Text[0..^4]),
+                SoundOnlyCheckBox.IsChecked ?? false,
+                starttime, endtime),
             DownloadStartedCallback,
             DownloadCallback,
             DownloadCancelledCallback);
@@ -587,36 +583,6 @@ public sealed partial class MainWindow : Window
             return true;
         }
         catch (Exception) { return false; }
-    }
-
-    private static string AddExtender(string fullPathWithName, string extension)
-        => !File.Exists($"{fullPathWithName}{extension}") ? fullPathWithName : GetNextFilename(fullPathWithName + " ({0})", extension);
-
-    private static string GetNextFilename(string pattern, string extension)
-    {
-        string tmp = string.Format(pattern, 1);
-
-        if (!(File.Exists($"{tmp}{extension}")))
-            return tmp;
-
-        int min = 1, max = 2;
-
-        while (File.Exists($"{string.Format(pattern, max)}{extension}"))
-        {
-            min = max;
-            max *= 2;
-        }
-
-        while (max != min + 1)
-        {
-            int pivot = (max + min) / 2;
-            if (File.Exists($"{string.Format(pattern, pivot)}{extension}"))
-                min = pivot;
-            else
-                max = pivot;
-        }
-
-        return string.Format(pattern, max);
     }
 
     private static (TimeSpan starttime, TimeSpan endtime) ConvertTimestamps(string starttime, string endtime, TimeSpan duration)
