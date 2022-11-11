@@ -1,7 +1,9 @@
 ﻿namespace YouTubeDownloaderV2;
 
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -59,13 +61,22 @@ public sealed partial class SearchWindow : Window
 
         SearchResults.Clear();
 
-        CurrentSearch = _client.GetVideoSearchAsync(SearchTextBox.Text);
+        try
+        {
+            CurrentSearch = _client.GetVideoSearchAsync(SearchTextBox.Text);
 
-        await AddResultsAsync(8);
-
-        SearchTextBox.IsEnabled = true;
-        SearchBtn.IsEnabled = true;
-        SearchBtn.Opacity = 1;
+            await AddResultsAsync(8);
+        }
+        catch (HttpRequestException)
+        {
+            MessageBox.Show("You have no internet connection!", "", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+        finally
+        {
+            SearchTextBox.IsEnabled = true;
+            SearchBtn.IsEnabled = true;
+            SearchBtn.Opacity = 1;
+        }
     }
 
     private async void SearchResultsListBox_ScrollChanged(object sender, ScrollChangedEventArgs e)

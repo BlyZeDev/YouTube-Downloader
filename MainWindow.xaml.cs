@@ -217,14 +217,15 @@ public sealed partial class MainWindow : Window
 
         CurrentVideo = null;
 
-        var video = await _client.TryGetVideoInfoAsync(LinkTextBox.Text);
+        var (video, isHttpError) = await _client.TryGetVideoInfoAsync(LinkTextBox.Text);
 
         if (video is null)
         {
             TaskbarInfo.ProgressState = System.Windows.Shell.TaskbarItemProgressState.Error;
             DownloadProgressBar.IsIndeterminate = false;
 
-            MessageBox.Show("Invalid Link", "", MessageBoxButton.OK, MessageBoxImage.Error);
+            if (isHttpError) MessageBox.Show("You have no internet connection!", "", MessageBoxButton.OK, MessageBoxImage.Error);
+            else MessageBox.Show("Invalid Link", "", MessageBoxButton.OK, MessageBoxImage.Error);
 
             MainGroupBox.IsEnabled = true;
 

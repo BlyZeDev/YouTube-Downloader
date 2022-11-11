@@ -25,7 +25,7 @@ public interface IYouTubeClient
 
     public IAsyncEnumerator<VideoSearchResult> GetVideoSearchAsync(string searchQuery);
 
-    public ValueTask<Video?> TryGetVideoInfoAsync(string url);
+    public ValueTask<(Video? video, bool httpError)> TryGetVideoInfoAsync(string url);
 
     public ValueTask<StreamManifest> GetVideoManifestAsync(string url);
 
@@ -65,15 +65,19 @@ public sealed class YouTubeClient : IYouTubeClient
     public IAsyncEnumerator<VideoSearchResult> GetVideoSearchAsync(string searchQuery)
         => Search.GetVideosAsync(searchQuery).GetAsyncEnumerator();
 
-    public async ValueTask<Video?> TryGetVideoInfoAsync(string url)
+    public async ValueTask<(Video? video, bool httpError)> TryGetVideoInfoAsync(string url)
     {
         try
         {
-            return await Videos.GetAsync(url);
+            return (await Videos.GetAsync(url), false);
+        }
+        catch (HttpRequestException)
+        {
+            return (null, true);
         }
         catch (Exception)
         {
-            return null;
+            return (null, false);
         }
     }
 
@@ -125,8 +129,6 @@ public sealed class YouTubeClient : IYouTubeClient
     {
         IsDownloading = true;
 
-        string temppath = Path.GetTempPath(), videotemp = "", audiotemp = "";
-
         var deletionFiles = new List<string>();
 
         try
@@ -147,8 +149,10 @@ public sealed class YouTubeClient : IYouTubeClient
             }
             else
             {
-                videotemp = Path.Combine(temppath, Guid.NewGuid().ToString() + ".tmp");
-                audiotemp = Path.Combine(temppath, Guid.NewGuid().ToString() + ".tmp");
+                string temppath = Path.GetTempPath();
+
+                string videotemp = Path.Combine(temppath, $"video-stream_{Guid.NewGuid()}.tmp");
+                string audiotemp = Path.Combine(temppath, $"audio-stream_{Guid.NewGuid()}.tmp");
 
                 deletionFiles.Add(videotemp + '.' + fullStreams.VideoStream!.Container.Name);
                 deletionFiles.Add(audiotemp + '.' + fullStreams.AudioStream.Container.Name);
@@ -194,7 +198,7 @@ public sealed class YouTubeClient : IYouTubeClient
     {
         await FFMpegArguments
             .FromUrlInput(new Uri(videoStream.Url))
-            .OutputToFile(temppath + '.' + videoStream.Container.Name, true, x =>
+            .OutputToFile(temppath + ".mp4", true, x =>
             {
                 x.WithCustomArgument($"-ss {metadata.StartTime} -t {metadata.GetDuration()}");
                 x.WithVideoBitrate((int)videoStream.Bitrate.KiloBitsPerSecond);
@@ -234,10 +238,11 @@ public sealed class YouTubeClient : IYouTubeClient
     {
         await FFMpegArguments
             .FromUrlInput(new Uri(audioStream.Url))
-            .OutputToFile(metadata.FullPath + '.' + audioStream.Container.Name, true, x =>
+            .OutputToFile($"{metadata.FullPath}.mp3", true, x =>
             {
-                x.WithCustomArgument($"-ss {metadata.StartTime} -t {metadata.GetDuration()} -strict -2");
+                x.WithCustomArgument($"-ss {metadata.StartTime} -t {metadata.GetDuration()}");
                 x.WithAudioBitrate((int)audioStream.Bitrate.KiloBitsPerSecond);
+                x.WithAudioCodec(FFMpegCore.Enums.AudioCodec.LibMp3Lame);
                 x.WithFastStart();
                 x.UsingShortest(true);
                 x.UsingMultithreading(true);
