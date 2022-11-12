@@ -1,9 +1,7 @@
 ﻿namespace YouTubeDownloaderV2.Common;
 
-using System;
 using YoutubeExplode.Common;
 using YoutubeExplode.Search;
-using YoutubeExplode.Videos;
 
 public readonly struct SearchVideoResult
 {

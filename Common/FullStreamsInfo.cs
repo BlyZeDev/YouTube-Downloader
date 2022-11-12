@@ -2,11 +2,11 @@
 
 using YoutubeExplode.Videos.Streams;
 
-public record FullStreamsInfo
+public sealed record FullStreamsInfo
 {
     public VideoOnlyStreamInfo? VideoStream { get; init; }
     public AudioOnlyStreamInfo AudioStream { get; init; }
-    public bool IsVideoStreamEmpty { get; private init; }
+    public bool IsVideoStreamEmpty { get; init; }
 
     public FullStreamsInfo(VideoOnlyStreamInfo? videoStreamInfo, AudioOnlyStreamInfo audioStreamInfo)
     {

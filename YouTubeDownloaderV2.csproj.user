@@ -10,6 +10,9 @@
     <Compile Update="SearchWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="ThemeEditorWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="VideoDetailsWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -19,6 +22,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="SearchWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="ThemeEditorWindow.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="VideoDetailsWindow.xaml">

@@ -31,9 +31,9 @@
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Ookii.Dialogs.Wpf" Version="5.0.1" />
-    <PackageReference Include="Syncfusion.SfInput.WPF" Version="20.3.0.52" />
-    <PackageReference Include="Syncfusion.SfProgressBar.WPF" Version="20.3.0.52" />
-    <PackageReference Include="Syncfusion.Shared.WPF" Version="20.3.0.52" />
+    <PackageReference Include="Syncfusion.SfInput.WPF" Version="20.3.0.56" />
+    <PackageReference Include="Syncfusion.SfProgressBar.WPF" Version="20.3.0.56" />
+    <PackageReference Include="Syncfusion.Shared.WPF" Version="20.3.0.56" />
     <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
     <PackageReference Include="YoutubeExplode" Version="6.2.4" />
     <PackageReference Include="YoutubeExplode.Converter" Version="6.2.4" />

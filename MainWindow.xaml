@@ -5,9 +5,7 @@
         xmlns:Microsoft_Windows_Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero"
         xmlns:adorners="http://gu.se/Adorners"
         Title="YouTube Downloader"
-        MinHeight="720" MinWidth="1280"
         Height="720" Width="1280"
-        MaxHeight="720" MaxWidth="1280"
         WindowStartupLocation="CenterScreen" Icon="icon.ico"
         WindowStyle="ThreeDBorderWindow" ResizeMode="CanMinimize"
         SourceInitialized="Window_SourceInitialized"
@@ -495,7 +493,7 @@
                                   ToolTipService.ShowOnDisabled="False"
                                   ToolTip="Right-Click to open the Theme Creator"
                                   DropDownClosed="ThemeComboBox_DropDownClosed"
-                                  MouseRightButtonDown="ThemeComboBox_MouseRightButtonDown">
+                                  PreviewMouseRightButtonDown="ThemeComboBox_PreviewMouseRightButtonDown">
 
                     <sync:ComboBoxItemAdv Content="Standard"
                                           BorderThickness="2"

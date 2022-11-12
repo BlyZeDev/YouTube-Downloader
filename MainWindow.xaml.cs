@@ -89,11 +89,11 @@ public sealed partial class MainWindow : Window
             }
         }
 
+        await _client.CancelDownloadIfRunning();
+
         var ffmpegProcess = Process.GetProcessesByName("ffmpeg");
 
         if (ffmpegProcess.Length == 1) ffmpegProcess.First().Kill();
-
-        await _client.CancelDownloadIfRunning();
     }
 
     private void MainGroupBox_IsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -159,7 +159,7 @@ public sealed partial class MainWindow : Window
 
     private async void BackgroundImageBtn_MouseRightButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
     {
-        if (e.RightButton == System.Windows.Input.MouseButtonState.Pressed)
+        if (e.RightButton is System.Windows.Input.MouseButtonState.Pressed)
         {
             if (!IsBackgroundImage) return;
 
@@ -197,12 +197,13 @@ public sealed partial class MainWindow : Window
         await ApplyNonDynamicTheme();
     }
 
-    private void ThemeComboBox_MouseRightButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+    private void ThemeComboBox_PreviewMouseRightButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
     {
-        if (e.ButtonState == System.Windows.Input.MouseButtonState.Pressed)
-        {
-            //Open Theme Creator
-        }
+        if (ThemeComboBox.IsDropDownOpen) return;
+
+        if (e.RightButton is not System.Windows.Input.MouseButtonState.Pressed) return;
+
+        new ThemeEditorWindow().ShowDialog();
     }
 
     private void BlyZeLogoBtn_Click(object sender, RoutedEventArgs e)
@@ -424,10 +425,7 @@ public sealed partial class MainWindow : Window
 
             SetGroupBoxesState(true);
         }
-        else
-        {
-            MessageBox.Show("Download was cancelled!", "", MessageBoxButton.OK, MessageBoxImage.Error);
-        }
+        else MessageBox.Show("Download was cancelled!", "", MessageBoxButton.OK, MessageBoxImage.Error);
     }
 
     private void DownloadStartedCallback()

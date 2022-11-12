@@ -2,7 +2,7 @@
 
 using System;
 
-public class Metadata
+public sealed class Metadata
 {
     public string Url { get; init; }
     public string FullPath { get; private set; }

@@ -1,6 +1,5 @@
 ﻿namespace YouTubeDownloaderV2.Services;
 
-using AngleSharp.Common;
 using FFMpegCore;
 using System;
 using System.Collections.Generic;
@@ -12,7 +11,6 @@ using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
 using YouTubeDownloaderV2.Common;
 using YoutubeExplode.Common;
 using YoutubeExplode.Search;
@@ -141,9 +139,9 @@ public sealed class YouTubeClient : IYouTubeClient
 
             if (fullStreams.IsVideoStreamEmpty)
             {
-                metadata.AddExtender(AddExtender(metadata.FullPath, fullStreams.AudioStream.Container.Name));
+                metadata.AddExtender(AddExtender(metadata.FullPath, "mp3"));
 
-                deletionFiles.Add(metadata.FullPath + '.' + fullStreams.AudioStream.Container.Name);
+                deletionFiles.Add($"{metadata.FullPath}.mp3");
 
                 await DownloadAudioFile(fullStreams.AudioStream, metadata, progress);
             }
@@ -154,18 +152,18 @@ public sealed class YouTubeClient : IYouTubeClient
                 string videotemp = Path.Combine(temppath, $"video-stream_{Guid.NewGuid()}.tmp");
                 string audiotemp = Path.Combine(temppath, $"audio-stream_{Guid.NewGuid()}.tmp");
 
-                deletionFiles.Add(videotemp + '.' + fullStreams.VideoStream!.Container.Name);
-                deletionFiles.Add(audiotemp + '.' + fullStreams.AudioStream.Container.Name);
+                deletionFiles.Add($"{videotemp}.mp4");
+                deletionFiles.Add($"{audiotemp}.{fullStreams.AudioStream.Container.Name}");
 
                 await DownloadVideoTempFile(fullStreams.VideoStream!, metadata, videotemp, x => progress(x / 2));
 
                 await DownloadAudioTempFile(fullStreams.AudioStream, metadata, audiotemp, x => progress(x / 2 + 50));
 
-                metadata.AddExtender(AddExtender(metadata.FullPath, fullStreams.VideoStream!.Container.Name));
+                metadata.AddExtender(AddExtender(metadata.FullPath, "mp4"));
 
-                deletionFiles.Add(metadata.FullPath + '.' + fullStreams.VideoStream!.Container.Name);
+                deletionFiles.Add($"{metadata.FullPath}.mp4");
 
-                SaveCombinedVideoAndAudio(metadata, videotemp, audiotemp, fullStreams.VideoStream!.Container.Name, fullStreams.AudioStream.Container.Name);
+                SaveCombinedVideoAndAudio(metadata, videotemp, audiotemp, "mp4", fullStreams.AudioStream.Container.Name);
             }
 
             return true;
@@ -198,7 +196,7 @@ public sealed class YouTubeClient : IYouTubeClient
     {
         await FFMpegArguments
             .FromUrlInput(new Uri(videoStream.Url))
-            .OutputToFile(temppath + ".mp4", true, x =>
+            .OutputToFile($"{temppath}.mp4", true, x =>
             {
                 x.WithCustomArgument($"-ss {metadata.StartTime} -t {metadata.GetDuration()}");
                 x.WithVideoBitrate((int)videoStream.Bitrate.KiloBitsPerSecond);
@@ -214,14 +212,14 @@ public sealed class YouTubeClient : IYouTubeClient
             .ProcessAsynchronously();
     }
 
-    private async Task DownloadAudioTempFile(AudioOnlyStreamInfo videoStream, Metadata metadata, string temppath, DownloadProgressCallback progress)
+    private async Task DownloadAudioTempFile(AudioOnlyStreamInfo audioStream, Metadata metadata, string temppath, DownloadProgressCallback progress)
     {
         await FFMpegArguments
-            .FromUrlInput(new Uri(videoStream.Url))
-            .OutputToFile(temppath + '.' + videoStream.Container.Name, true, x =>
+            .FromUrlInput(new Uri(audioStream.Url))
+            .OutputToFile($"{temppath}.{audioStream.Container.Name}", true, x =>
             {
                 x.WithCustomArgument($"-ss {metadata.StartTime} -t {metadata.GetDuration()}");
-                x.WithAudioBitrate((int)videoStream.Bitrate.KiloBitsPerSecond);
+                x.WithAudioBitrate((int)audioStream.Bitrate.KiloBitsPerSecond);
                 x.WithFastStart();
                 x.UsingShortest(true);
                 x.UsingMultithreading(true);
@@ -256,7 +254,7 @@ public sealed class YouTubeClient : IYouTubeClient
     }
 
     private static void SaveCombinedVideoAndAudio(Metadata metadata, string videoFilePath, string audioFilePath, string videoExtension, string audioExtension)
-        => FFMpeg.ReplaceAudio(videoFilePath + '.' + videoExtension, audioFilePath + '.' + audioExtension, metadata.FullPath + '.' + videoExtension, true);
+        => FFMpeg.ReplaceAudio($"{videoFilePath}.{videoExtension}", $"{audioFilePath}.{audioExtension}", $"{metadata.FullPath}.{videoExtension}", true);
 
     public Task CancelDownloadIfRunning()
     {
@@ -287,7 +285,7 @@ public sealed class YouTubeClient : IYouTubeClient
 
     private static string AddExtender(string fullPath, string fileExtension)
     {
-        if (File.Exists(fullPath + '.' + fileExtension))
+        if (File.Exists($"{fullPath}.{fileExtension}"))
         {
             int counter = 0;
 
