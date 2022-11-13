@@ -9,6 +9,7 @@
         ResizeMode="NoResize"
         WindowStartupLocation="CenterScreen"
         Background="{DynamicResource Background}"
+        IsTabStop="False"
         Closed="Window_Closed">
 
     <Grid ClipToBounds="True" UseLayoutRounding="True">
@@ -22,7 +23,7 @@
                  Grid.Row="0"
                  BorderThickness="0"
                  Height="35"
-                 Width="335"
+                 Width="330"
                  HorizontalAlignment="Left"
                  adorners:Watermark.VisibleWhen="EmptyAndNotKeyboardFocused"
                  adorners:Watermark.Text="Enter search here"

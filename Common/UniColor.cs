@@ -3,7 +3,6 @@
 using Newtonsoft.Json;
 using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Runtime.CompilerServices;
 using System.Windows.Media;
 using Color = System.Drawing.Color;
 using WindowsColor = System.Windows.Media.Color;

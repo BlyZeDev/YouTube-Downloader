@@ -8,6 +8,7 @@
         ResizeMode="NoResize"
         WindowStartupLocation="CenterScreen"
         Background="{DynamicResource Background}"
+        IsTabStop="False"
         Loaded="Window_Loaded"
         Padding="10">
     

@@ -1,15 +1,309 @@
 ﻿<Window x:Class="YouTubeDownloaderV2.ThemeEditorWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:adorners="http://gu.se/Adorners"
+        xmlns:sync="http://schemas.syncfusion.com/wpf"
         Title="YouTube Downloader - Theme Editor"
-        Height="500" Width="500"
+        Height="700" Width="600"
         Icon="icon.ico"
         WindowStyle="ThreeDBorderWindow"
         ResizeMode="NoResize"
         WindowStartupLocation="CenterScreen"
-        Background="{DynamicResource Background}">
-    
-    <Grid ClipToBounds="True" UseLayoutRounding="True">
-        
+        Background="{DynamicResource Background}"
+        IsTabStop="False"
+        SourceInitialized="Window_SourceInitialized">
+
+    <Window.Resources>
+        <SolidColorBrush x:Key="BackgroundTE" Color="Black"/>
+        <SolidColorBrush x:Key="ControlTE" Color="Black"/>
+        <SolidColorBrush x:Key="ButtonTE" Color="Black"/>
+        <SolidColorBrush x:Key="TextTE" Color="Black"/>
+
+        <Style x:Key="TabControlStyle" TargetType="{x:Type TabControl}">
+            <Setter Property="Background" Value="{DynamicResource Background}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="Padding" Value="5"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type TabControl}">
+                        <Grid UseLayoutRounding="True" SnapsToDevicePixels="True">
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+
+                            <TabPanel Grid.Row="0"
+                                      Background="{DynamicResource Background}"
+                                      IsItemsHost="True"
+                                      HorizontalAlignment="Center"/>
+
+                            <Border Grid.Row="1"
+                                    CornerRadius="0"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    Background="{TemplateBinding Background}">
+
+                                <ContentPresenter ContentSource="SelectedContent"
+                                                  UseLayoutRounding="True"
+                                                  SnapsToDevicePixels="True"
+                                                  Margin="{TemplateBinding Padding}"/>
+
+                            </Border>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="TabItemStyle" TargetType="{x:Type TabItem}">
+            <Setter Property="Background" Value="{DynamicResource Background}"/>
+            <Setter Property="Foreground" Value="{DynamicResource Text}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="Margin" Value="2.5,0,2.5,0"/>
+            <Setter Property="Padding" Value="20, 7.5"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontFamily" Value="{StaticResource OpenSans}"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type TabItem}">
+
+                        <Grid UseLayoutRounding="True"
+                              SnapsToDevicePixels="True">
+
+                            <Border CornerRadius="5"
+                                    Background="{TemplateBinding Background}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    Margin="{TemplateBinding Margin}"/>
+
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"
+                                              SnapsToDevicePixels="True"
+                                              UseLayoutRounding="True"
+                                              RecognizesAccessKey="True"
+                                              Margin="{TemplateBinding Padding}"
+                                              ContentSource="Header"
+                                              Focusable="False"/>
+                        </Grid>
+
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Opacity" Value="0.75"/>
+                            </Trigger>
+
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Background" Value="{DynamicResource Control}"/>
+                                <Setter Property="Opacity" Value="1"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Grid ClipToBounds="True" UseLayoutRounding="True" Margin="10,10,10,0">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Label Grid.Row="0"
+               Content="Theme Preview"
+               Margin="5,0,5,7.5"
+               FontSize="25"
+               Foreground="{DynamicResource Text}"
+               FontFamily="{StaticResource OpenSans}"
+               FontWeight="Bold"
+               VerticalAlignment="Center"
+               HorizontalAlignment="Center"
+               VerticalContentAlignment="Center"
+               HorizontalContentAlignment="Center"/>
+
+        <Border Grid.Row="1"
+                Background="{DynamicResource BackgroundTE}"
+                BorderBrush="{DynamicResource ControlTE}"
+                BorderThickness="3"
+                CornerRadius="7.5"
+                Padding="25,30,25,30">
+
+            <Grid ClipToBounds="True" UseLayoutRounding="True">
+
+                <TextBox Grid.Row="0"
+                         BorderThickness="0"
+                         Height="35"
+                         Width="350"
+                         HorizontalAlignment="Left"
+                         adorners:Watermark.VisibleWhen="EmptyAndNotKeyboardFocused"
+                         adorners:Watermark.Text="Placeholder Text"
+                         adorners:Watermark.TextStyle="{StaticResource AdornerTextStyle}"
+                         Foreground="{DynamicResource TextTE}"
+                         Background="{DynamicResource ControlTE}"
+                         FontFamily="{StaticResource OpenSans}"
+                         FontWeight="SemiBold"
+                         FontSize="20"
+                         FontStyle="Normal"
+                         Padding="5"
+                         IsTabStop="False">
+
+                    <TextBox.Resources>
+                        <Style TargetType="{x:Type Border}">
+                            <Setter Property="CornerRadius"
+                                    Value="7.5"/>
+                        </Style>
+                    </TextBox.Resources>
+                </TextBox>
+
+                <Button Style="{StaticResource ButtonStyle}"
+                        Grid.Row="0"
+                        BorderThickness="0"
+                        HorizontalAlignment="Right"
+                        Background="{DynamicResource ButtonTE}"
+                        Height="55"
+                        Padding="35,0,35,0"
+                        Content="Text"
+                        FontFamily="{StaticResource OpenSans}"
+                        FontWeight="Bold"
+                        FontSize="30"
+                        Foreground="{DynamicResource TextTE}"
+                        IsTabStop="False">
+
+                    <Button.Resources>
+                        <Style TargetType="{x:Type Border}">
+                            <Setter Property="CornerRadius"
+                                    Value="7.5"/>
+                        </Style>
+                    </Button.Resources>
+                </Button>
+
+            </Grid>
+        </Border>
+
+        <Border Grid.Row="2"
+                Background="{DynamicResource Background}">
+            <TabControl Style="{StaticResource TabControlStyle}"
+                        Margin="0,15,0,0"
+                        FontSize="20">
+
+                <TabItem Header="Background" Style="{StaticResource TabItemStyle}">
+                    <sync:ColorEdit x:Name="BackgroundColorPicker"
+                                    IsAlphaVisible="False"
+                                    A="255"
+                                    IsGradientPropertyEnabled="False"
+                                    EnableGradientToSolidSwitch="False"
+                                    VisualizationStyle="RGB"
+                                    Background="{DynamicResource Background}"
+                                    Foreground="{DynamicResource Text}"
+                                    BorderThickness="0"
+                                    HorizontalContentAlignment="Center"
+                                    VerticalContentAlignment="Center"
+                                    BrushMode="Solid"
+                                    EnableToolTip="False"
+                                    FontSize="15"
+                                    FontFamily="{StaticResource OpenSans}"
+                                    FontWeight="SemiBold"
+                                    ColorChanged="BackgroundColorPicker_ColorChanged">
+                    </sync:ColorEdit>
+                </TabItem>
+
+                <TabItem Header="Control" Style="{StaticResource TabItemStyle}">
+                    <sync:ColorEdit x:Name="ControlColorPicker"
+                                    IsAlphaVisible="False"
+                                    A="255"
+                                    IsGradientPropertyEnabled="False"
+                                    EnableGradientToSolidSwitch="False"
+                                    VisualizationStyle="RGB"
+                                    Background="{DynamicResource Background}"
+                                    Foreground="{DynamicResource Text}"
+                                    BorderThickness="0"
+                                    HorizontalContentAlignment="Center"
+                                    VerticalContentAlignment="Center"
+                                    BrushMode="Solid"
+                                    EnableToolTip="False"
+                                    FontSize="15"
+                                    FontFamily="{StaticResource OpenSans}"
+                                    FontWeight="SemiBold"
+                                    ColorChanged="ControlColorPicker_ColorChanged">
+                    </sync:ColorEdit>
+                </TabItem>
+
+                <TabItem Header="Button" Style="{StaticResource TabItemStyle}">
+                    <sync:ColorEdit x:Name="ButtonColorPicker"
+                                    IsAlphaVisible="False"
+                                    A="255"
+                                    IsGradientPropertyEnabled="False"
+                                    EnableGradientToSolidSwitch="False"
+                                    VisualizationStyle="RGB"
+                                    Background="{DynamicResource Background}"
+                                    Foreground="{DynamicResource Text}"
+                                    BorderThickness="0"
+                                    HorizontalContentAlignment="Center"
+                                    VerticalContentAlignment="Center"
+                                    BrushMode="Solid"
+                                    EnableToolTip="False"
+                                    FontSize="15"
+                                    FontFamily="{StaticResource OpenSans}"
+                                    FontWeight="SemiBold"
+                                    ColorChanged="ButtonColorPicker_ColorChanged">
+                    </sync:ColorEdit>
+                </TabItem>
+
+                <TabItem Header="Text" Style="{StaticResource TabItemStyle}">
+                    <sync:ColorEdit x:Name="TextColorPicker"
+                                    IsAlphaVisible="False"
+                                    A="255"
+                                    IsGradientPropertyEnabled="False"
+                                    EnableGradientToSolidSwitch="False"
+                                    VisualizationStyle="RGB"
+                                    Background="{DynamicResource Background}"
+                                    Foreground="{DynamicResource Text}"
+                                    BorderThickness="0"
+                                    HorizontalContentAlignment="Center"
+                                    VerticalContentAlignment="Center"
+                                    BrushMode="Solid"
+                                    EnableToolTip="False"
+                                    FontSize="15"
+                                    FontFamily="{StaticResource OpenSans}"
+                                    FontWeight="SemiBold"
+                                    ColorChanged="TextColorPicker_ColorChanged">
+                    </sync:ColorEdit>
+                </TabItem>
+
+            </TabControl>
+        </Border>
+
+        <Button x:Name="SaveBtn"
+                Style="{StaticResource ButtonStyle}"
+                Grid.Row="3"
+                Grid.Column="0"
+                BorderThickness="0"
+                Background="{DynamicResource Button}"
+                Height="50"
+                Margin="0,0,0,10"
+                Padding="25,0,25,0"
+                Content="Save"
+                FontFamily="{StaticResource OpenSans}"
+                FontWeight="Bold"
+                FontSize="25"
+                Foreground="{DynamicResource Text}"
+                Click="SaveBtn_Click">
+
+            <Button.Resources>
+                <Style TargetType="{x:Type Border}">
+                    <Setter Property="CornerRadius"
+                            Value="7.5"/>
+                </Style>
+            </Button.Resources>
+        </Button>
+
     </Grid>
 </Window>

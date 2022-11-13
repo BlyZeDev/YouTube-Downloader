@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 using System;
 
 [Serializable]
-public sealed class Theme
+public sealed record Theme
 {
     [JsonRequired]
     [JsonProperty("BackgroundColor")]
