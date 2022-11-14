@@ -36,7 +36,8 @@
                FontSize="20"
                Foreground="{DynamicResource Text}"
                FontFamily="{StaticResource OpenSans}"
-               FontWeight="Bold"/>
+               FontWeight="Bold"
+               IsTabStop="False"/>
         
         <Label x:Name="ChannelNameLabel"
                Grid.Row="0"
@@ -49,6 +50,7 @@
                Margin="-50,0,0,0"
                ToolTipService.HasDropShadow="True"
                ToolTipService.ShowOnDisabled="False"
+               IsTabStop="False"
                MouseLeftButtonDown="ChannelNameLabel_MouseLeftButtonDown"/>
 
         <Label Content="Upload Date:"
@@ -57,7 +59,8 @@
                FontSize="20"
                Foreground="{DynamicResource Text}"
                FontFamily="{StaticResource OpenSans}"
-               FontWeight="Bold"/>
+               FontWeight="Bold"
+               IsTabStop="False"/>
         
         <Label x:Name="UploadDateLabel"
                Grid.Row="1"
@@ -66,7 +69,8 @@
                Foreground="{DynamicResource Text}"
                FontFamily="{StaticResource OpenSans}"
                FontWeight="SemiBold"
-               Margin="-10,0,0,0"/>
+               Margin="-10,0,0,0"
+               IsTabStop="False"/>
 
         <Label Content="Views:"
                Grid.Row="2"
@@ -74,7 +78,8 @@
                FontSize="20"
                Foreground="{DynamicResource Text}"
                FontFamily="{StaticResource OpenSans}"
-               FontWeight="Bold"/>
+               FontWeight="Bold"
+               IsTabStop="False"/>
 
         <Label x:Name="ViewsLabel"
                Grid.Row="2"
@@ -83,7 +88,8 @@
                Foreground="{DynamicResource Text}"
                FontFamily="{StaticResource OpenSans}"
                FontWeight="SemiBold"
-               Margin="-70,0,0,0"/>
+               Margin="-70,0,0,0"
+               IsTabStop="False"/>
         
         <Label Content="Likes:"
                Grid.Row="3"
@@ -91,7 +97,8 @@
                FontSize="20"
                Foreground="{DynamicResource Text}"
                FontFamily="{StaticResource OpenSans}"
-               FontWeight="Bold"/>
+               FontWeight="Bold"
+               IsTabStop="False"/>
 
         <Label x:Name="LikesLabel"
                Grid.Row="3"
@@ -100,7 +107,8 @@
                Foreground="{DynamicResource Text}"
                FontFamily="{StaticResource OpenSans}"
                FontWeight="SemiBold"
-               Margin="-80,0,0,0"/>
+               Margin="-80,0,0,0"
+               IsTabStop="False"/>
 
         <Label Content="Dislikes:"
                Grid.Row="4"
@@ -108,7 +116,8 @@
                FontSize="20"
                Foreground="{DynamicResource Text}"
                FontFamily="{StaticResource OpenSans}"
-               FontWeight="Bold"/>
+               FontWeight="Bold"
+               IsTabStop="False"/>
 
         <Label Content="Not supported from YouTube"
                Grid.Row="4"
@@ -117,7 +126,8 @@
                Foreground="{DynamicResource Text}"
                FontFamily="{StaticResource OpenSans}"
                FontWeight="SemiBold"
-               Margin="-55,0,0,0"/>
+               Margin="-55,0,0,0"
+               IsTabStop="False"/>
 
         <Label Content="Description:"
                Grid.Row="5"
@@ -126,7 +136,8 @@
                Foreground="{DynamicResource Text}"
                FontFamily="{StaticResource OpenSans}"
                FontWeight="Bold"
-               Margin="0,43.5,0,0"/>
+               Margin="0,43.5,0,0"
+               IsTabStop="False"/>
 
         <Border Grid.Row="5"
                 Grid.Column="1"
@@ -137,17 +148,20 @@
                 Margin="-10,0,0,0"
                 Padding="5"
                 Background="{DynamicResource Control}">
+            
             <ScrollViewer FontSize="20"
                           Background="{DynamicResource Control}"
                           FontFamily="{StaticResource OpenSans}"
                           FontWeight="SemiBold"
                           Padding="5"
-                          ScrollViewer.CanContentScroll="True">
+                          ScrollViewer.CanContentScroll="True"
+                          IsTabStop="False">
                 <TextBlock x:Name="DescriptionTextBlock"
                            Foreground="{DynamicResource Text}"
                            TextWrapping="Wrap"
                            ScrollViewer.CanContentScroll="True"/>
             </ScrollViewer>
+            
         </Border>
 
         <Label Content="Keywords:"
@@ -157,7 +171,8 @@
                Foreground="{DynamicResource Text}"
                FontFamily="{StaticResource OpenSans}"
                FontWeight="Bold"
-               Margin="0,22.5,0,0"/>
+               Margin="0,22.5,0,0"
+               IsTabStop="False"/>
 
         <Border Grid.Row="6"
                 Grid.Column="1"
@@ -168,6 +183,7 @@
                 Background="{DynamicResource Control}"
                 Margin="-30,12,0,0"
                 Padding="5,0,5,5">
+            
             <TextBox x:Name="KeywordsTextBox"
                      Foreground="{DynamicResource Text}"
                      Background="{DynamicResource Control}"
@@ -182,7 +198,8 @@
                      ScrollViewer.CanContentScroll="True"
                      Cursor="Arrow"
                      VerticalContentAlignment="Center"
-                     HorizontalContentAlignment="Center">
+                     HorizontalContentAlignment="Center"
+                     IsTabStop="False">
 
                 <TextBox.Resources>
                     <Style TargetType="{x:Type Border}">
@@ -191,6 +208,7 @@
                     </Style>
                 </TextBox.Resources>
             </TextBox>
+            
         </Border>
 
     </Grid>

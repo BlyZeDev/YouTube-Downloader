@@ -127,7 +127,8 @@
                VerticalAlignment="Center"
                HorizontalAlignment="Center"
                VerticalContentAlignment="Center"
-               HorizontalContentAlignment="Center"/>
+               HorizontalContentAlignment="Center"
+               IsTabStop="False"/>
 
         <Border Grid.Row="1"
                 Background="{DynamicResource BackgroundTE}"
@@ -192,9 +193,10 @@
                 Background="{DynamicResource Background}">
             <TabControl Style="{StaticResource TabControlStyle}"
                         Margin="0,15,0,0"
-                        FontSize="20">
+                        FontSize="20"
+                        IsTabStop="False">
 
-                <TabItem Header="Background" Style="{StaticResource TabItemStyle}">
+                <TabItem Header="Background" Style="{StaticResource TabItemStyle}" IsTabStop="False">
                     <sync:ColorEdit x:Name="BackgroundColorPicker"
                                     IsAlphaVisible="False"
                                     A="255"
@@ -211,11 +213,11 @@
                                     FontSize="15"
                                     FontFamily="{StaticResource OpenSans}"
                                     FontWeight="SemiBold"
-                                    ColorChanged="BackgroundColorPicker_ColorChanged">
-                    </sync:ColorEdit>
+                                    IsTabStop="False"
+                                    ColorChanged="BackgroundColorPicker_ColorChanged"/>
                 </TabItem>
 
-                <TabItem Header="Control" Style="{StaticResource TabItemStyle}">
+                <TabItem Header="Control" Style="{StaticResource TabItemStyle}" IsTabStop="False">
                     <sync:ColorEdit x:Name="ControlColorPicker"
                                     IsAlphaVisible="False"
                                     A="255"
@@ -232,11 +234,11 @@
                                     FontSize="15"
                                     FontFamily="{StaticResource OpenSans}"
                                     FontWeight="SemiBold"
-                                    ColorChanged="ControlColorPicker_ColorChanged">
-                    </sync:ColorEdit>
+                                    IsTabStop="False"
+                                    ColorChanged="ControlColorPicker_ColorChanged"/>
                 </TabItem>
 
-                <TabItem Header="Button" Style="{StaticResource TabItemStyle}">
+                <TabItem Header="Button" Style="{StaticResource TabItemStyle}" IsTabStop="False">
                     <sync:ColorEdit x:Name="ButtonColorPicker"
                                     IsAlphaVisible="False"
                                     A="255"
@@ -253,11 +255,11 @@
                                     FontSize="15"
                                     FontFamily="{StaticResource OpenSans}"
                                     FontWeight="SemiBold"
-                                    ColorChanged="ButtonColorPicker_ColorChanged">
-                    </sync:ColorEdit>
+                                    IsTabStop="False"
+                                    ColorChanged="ButtonColorPicker_ColorChanged"/>
                 </TabItem>
 
-                <TabItem Header="Text" Style="{StaticResource TabItemStyle}">
+                <TabItem Header="Text" Style="{StaticResource TabItemStyle}" IsTabStop="False">
                     <sync:ColorEdit x:Name="TextColorPicker"
                                     IsAlphaVisible="False"
                                     A="255"
@@ -274,8 +276,8 @@
                                     FontSize="15"
                                     FontFamily="{StaticResource OpenSans}"
                                     FontWeight="SemiBold"
-                                    ColorChanged="TextColorPicker_ColorChanged">
-                    </sync:ColorEdit>
+                                    IsTabStop="False"
+                                    ColorChanged="TextColorPicker_ColorChanged"/>
                 </TabItem>
 
             </TabControl>
@@ -295,6 +297,7 @@
                 FontWeight="Bold"
                 FontSize="25"
                 Foreground="{DynamicResource Text}"
+                IsTabStop="False"
                 Click="SaveBtn_Click">
 
             <Button.Resources>

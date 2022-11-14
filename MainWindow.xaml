@@ -301,6 +301,7 @@
                   BorderBrush="{DynamicResource Control}"
                   BorderThickness="3"
                   Margin="20,20,20,0"
+                  IsTabStop="False"
                   IsEnabledChanged="MainGroupBox_IsEnabledChanged">
             
             <GroupBox.Header>
@@ -309,7 +310,8 @@
                        Foreground="{DynamicResource Text}"
                        FontFamily="{StaticResource OpenSans}"
                        FontWeight="Bold"
-                       Padding="2"/>
+                       Padding="2"
+                       IsTabStop="False"/>
             </GroupBox.Header>
 
             <Grid Margin="-10,10,15,10" ClipToBounds="True" UseLayoutRounding="True">
@@ -343,6 +345,7 @@
                          FontStyle="Normal"
                          Margin="0,5,0,5"
                          Padding="5"
+                         IsTabStop="False"
                          IsKeyboardFocusedChanged="LinkTextBox_IsKeyboardFocusedChanged">
                     
                     <TextBox.Resources>
@@ -368,6 +371,7 @@
                         FontWeight="Bold"
                         FontSize="30"
                         Foreground="{DynamicResource Text}"
+                        IsTabStop="False"
                         Click="SearchBtn_Click">
                     
                     <Button.Resources>
@@ -389,6 +393,7 @@
                         Background="{DynamicResource Button}"
                         HorizontalContentAlignment="Center"
                         VerticalContentAlignment="Center"
+                        IsTabStop="False"
                         Click="BlyZeLogoBtn_Click">
 
                     <Image x:Name="BlyZeLogoImage"
@@ -419,6 +424,7 @@
                         FontWeight="Bold"
                         FontSize="30"
                         Foreground="{DynamicResource Text}"
+                        IsTabStop="False"
                         Click="StartBtn_Click">
                     
                     <Button.Resources>
@@ -442,6 +448,7 @@
                         ToolTipService.HasDropShadow="True"
                         ToolTipService.ShowOnDisabled="False"
                         ToolTip="Right-Click to delete the current background"
+                        IsTabStop="False"
                         Click="BackgroundImageBtn_Click"
                         MouseRightButtonDown="BackgroundImageBtn_MouseRightButtonDown">
 
@@ -465,7 +472,8 @@
                          Margin="15,15,0,0"
                          Height="35"
                          Width="150"
-                         Background="{DynamicResource Control}">
+                         Background="{DynamicResource Control}"
+                         IsTabStop="False">
 
                     <TextBox.Resources>
                         <Style TargetType="{x:Type Border}">
@@ -493,6 +501,7 @@
                                   ToolTipService.HasDropShadow="True"
                                   ToolTipService.ShowOnDisabled="False"
                                   ToolTip="Right-Click to open the Theme Creator"
+                                  IsTabStop="False"
                                   DropDownClosed="ThemeComboBox_DropDownClosed"
                                   PreviewMouseRightButtonDown="ThemeComboBox_PreviewMouseRightButtonDown">
 
@@ -500,27 +509,32 @@
                                           BorderThickness="2"
                                           BorderBrush="{DynamicResource Text}"
                                           Foreground="{DynamicResource Text}"
-                                          Background="{DynamicResource Control}"/>
+                                          Background="{DynamicResource Control}"
+                                          IsTabStop="False"/>
                     <sync:ComboBoxItemAdv Content="Dark"
                                           BorderThickness="2,0,2,0"
                                           BorderBrush="{DynamicResource Text}"
                                           Foreground="{DynamicResource Text}"
-                                          Background="{DynamicResource Control}"/>
+                                          Background="{DynamicResource Control}"
+                                          IsTabStop="False"/>
                     <sync:ComboBoxItemAdv Content="Light"
                                           BorderThickness="2,2,2,2"
                                           BorderBrush="{DynamicResource Text}"
                                           Foreground="{DynamicResource Text}"
-                                          Background="{DynamicResource Control}"/>
+                                          Background="{DynamicResource Control}"
+                                          IsTabStop="False"/>
                     <sync:ComboBoxItemAdv Content="Neon"
                                           BorderThickness="2,0,2,0"
                                           BorderBrush="{DynamicResource Text}"
                                           Foreground="{DynamicResource Text}"
-                                          Background="{DynamicResource Control}"/>
+                                          Background="{DynamicResource Control}"
+                                          IsTabStop="False"/>
                     <sync:ComboBoxItemAdv Content="Custom"
                                           BorderThickness="2"
                                           BorderBrush="{DynamicResource Text}"
                                           Foreground="{DynamicResource Text}"
-                                          Background="{DynamicResource Control}"/>
+                                          Background="{DynamicResource Control}"
+                                          IsTabStop="False"/>
                 </sync:ComboBoxAdv>
             </Grid>
         </GroupBox>
@@ -531,6 +545,7 @@
                   BorderBrush="{DynamicResource Control}"
                   BorderThickness="3"
                   Margin="20,20,20,0"
+                  IsTabStop="False"
                   IsEnabledChanged="VideoDetailsGroupBox_IsEnabledChanged">
             
             <GroupBox.Header>
@@ -539,7 +554,8 @@
                        Foreground="{DynamicResource Text}"
                        FontFamily="{StaticResource OpenSans}"
                        FontWeight="Bold"
-                       Padding="2"/>
+                       Padding="2"
+                       IsTabStop="False"/>
             </GroupBox.Header>
             
             <Grid Margin="-10,10,15,10" ClipToBounds="True" UseLayoutRounding="True">
@@ -567,7 +583,8 @@
                        Foreground="{DynamicResource Text}"
                        FontFamily="{StaticResource OpenSans}"
                        FontWeight="Bold"
-                       Margin="0,20,0,0"/>
+                       Margin="0,20,0,0"
+                       IsTabStop="False"/>
                 
                 <TextBox x:Name="TitleTextBox"
                          Grid.Row="0"
@@ -581,7 +598,8 @@
                          FontSize="20"
                          FontStyle="Normal"
                          Margin="-85,-75,20,0"
-                         Padding="5">
+                         Padding="5"
+                         IsTabStop="False">
                     
                     <TextBox.Resources>
                         <Style TargetType="{x:Type Border}">
@@ -598,7 +616,8 @@
                        Foreground="{DynamicResource Text}"
                        FontFamily="{StaticResource OpenSans}"
                        FontWeight="Bold"
-                       Margin="0,-43,0,0"/>
+                       Margin="0,-43,0,0"
+                       IsTabStop="False"/>
 
                 <TextBox x:Name="VideoQualityComboBoxOverlay"
                          BorderThickness="0"
@@ -609,7 +628,8 @@
                          Width="150"
                          Background="{DynamicResource Control}"
                          HorizontalContentAlignment="Center"
-                         VerticalContentAlignment="Top">
+                         VerticalContentAlignment="Top"
+                         IsTabStop="False">
                     
                     <TextBox.Resources>
                         <Style TargetType="{x:Type Border}">
@@ -633,7 +653,8 @@
                                   FontSize="20"
                                   Padding="0"
                                   HorizontalContentAlignment="Center"
-                                  VerticalContentAlignment="Center"/>
+                                  VerticalContentAlignment="Center"
+                                  IsTabStop="False"/>
 
                 <Label Content="Audio Quality"
                        Grid.Row="1"
@@ -642,7 +663,8 @@
                        Foreground="{DynamicResource Text}"
                        FontFamily="{StaticResource OpenSans}"
                        FontWeight="Bold"
-                       Margin="15,-43,0,0"/>
+                       Margin="15,-43,0,0"
+                       IsTabStop="False"/>
 
                 <TextBox x:Name="AudioQualityComboBoxOverlay"
                          BorderThickness="0"
@@ -653,7 +675,8 @@
                          Width="150"
                          Background="{DynamicResource Control}"
                          HorizontalContentAlignment="Center"
-                         VerticalContentAlignment="Center">
+                         VerticalContentAlignment="Center"
+                         IsTabStop="False">
                     
                     <TextBox.Resources>
                         <Style TargetType="{x:Type Border}">
@@ -677,7 +700,8 @@
                                   FontSize="20"
                                   Padding="0"
                                   HorizontalContentAlignment="Center"
-                                  VerticalContentAlignment="Center"/>
+                                  VerticalContentAlignment="Center"
+                                  IsTabStop="False"/>
 
                 <Button Style="{StaticResource ButtonStyle}"
                         Grid.Row="1"
@@ -693,6 +717,7 @@
                         ToolTipService.HasDropShadow="True"
                         ToolTipService.ShowOnDisabled="False"
                         ToolTip="Click to open the video information"
+                        IsTabStop="False"
                         Click="VideoInfoButton_Click">
 
                     <Image x:Name="VideoInfoImage"
@@ -740,7 +765,8 @@
                        Foreground="{DynamicResource Text}"
                        FontFamily="{StaticResource OpenSans}"
                        FontWeight="Bold"
-                       Margin="0,-53,0,0"/>
+                       Margin="0,-53,0,0"
+                       IsTabStop="False"/>
 
                 <TextBox x:Name="DownloadPathTextBox"
                          Grid.Row="2"
@@ -758,6 +784,7 @@
                          ToolTipService.HasDropShadow="True"
                          ToolTipService.ShowOnDisabled="False"
                          ToolTip="Double-Click to open the Explorer"
+                         IsTabStop="False"
                          MouseDoubleClick="DownloadPathTextBox_MouseDoubleClick">
                     
                     <TextBox.Resources>
@@ -775,7 +802,8 @@
                        Foreground="{DynamicResource Text}"
                        FontFamily="{StaticResource OpenSans}"
                        FontWeight="Bold"
-                       Margin="0,34,0,0"/>
+                       Margin="0,34,0,0"
+                       IsTabStop="False"/>
 
                 <Border Grid.Row="3"
                         Grid.Column="1"
@@ -805,8 +833,8 @@
                                        FontSize="20"
                                        FontStyle="Normal"
                                        TextAlignment="Center"
-                                       VerticalContentAlignment="Center">
-                    </sync:SfMaskedEdit>
+                                       VerticalContentAlignment="Center"
+                                       IsTabStop="False"/>
                 </Border>
 
                 <Label Content="End time"
@@ -816,7 +844,8 @@
                        Foreground="{DynamicResource Text}"
                        FontFamily="{StaticResource OpenSans}"
                        FontWeight="Bold"
-                       Margin="-18,34,0,0"/>
+                       Margin="-18,34,0,0"
+                       IsTabStop="False"/>
 
                 <Border Grid.Row="3"
                         Grid.Column="3"
@@ -846,8 +875,8 @@
                                        FontSize="20"
                                        FontStyle="Normal"
                                        TextAlignment="Center"
-                                       VerticalContentAlignment="Center">
-                    </sync:SfMaskedEdit>
+                                       VerticalContentAlignment="Center"
+                                       IsTabStop="False"/>
                 </Border>
 
                 <CheckBox x:Name="SoundOnlyCheckBox"
@@ -858,7 +887,8 @@
                           BorderThickness="0"
                           Background="{DynamicResource Control}"
                           Foreground="{DynamicResource Text}"
-                          Margin="0,15,0,0">
+                          Margin="0,15,0,0"
+                          IsTabStop="False">
                     
                     <CheckBox.LayoutTransform>
                         <ScaleTransform ScaleX="2.2" ScaleY="2.2"/>
@@ -879,7 +909,8 @@
                        FontFamily="{StaticResource OpenSans}"
                        FontWeight="Bold"
                        Margin="5,30,0,0"
-                       HorizontalAlignment="Right"/>
+                       HorizontalAlignment="Right"
+                       IsTabStop="False"/>
 
                 <Button x:Name="DownloadBtn"
                         Style="{StaticResource ButtonStyle}"
@@ -896,6 +927,7 @@
                         FontWeight="Bold"
                         FontSize="30"
                         Foreground="{DynamicResource Text}"
+                        IsTabStop="False"
                         Click="DownloadBtn_Click">
 
                     <Button.Resources>
@@ -918,9 +950,9 @@
                                   Height="40"
                                   IndicatorCornerRadius="7.5"
                                   TrackColor="{DynamicResource Control}"
-                                  ProgressColor="{DynamicResource Button}">
-        </sync:SfLinearProgressBar>
-        
+                                  ProgressColor="{DynamicResource Button}"
+                                  IsTabStop="False"/>
+
         <TextBlock x:Name="DownloadProgressLabel"
                    Grid.Row="2"
                    Text="{Binding ElementName=DownloadProgressBar, Path=Progress, StringFormat={}{0:0}%}"
