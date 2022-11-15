@@ -328,6 +328,7 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 
                 <TextBox x:Name="LinkTextBox"
@@ -382,6 +383,34 @@
                     </Button.Resources>
                 </Button>
 
+                <Button x:Name="UpdateBtn"
+                        Style="{StaticResource ButtonStyle}"
+                        Grid.Row="1"
+                        Grid.Column="4"
+                        BorderThickness="0"
+                        Height="50"
+                        Width="50"
+                        Margin="0,15,15,0"
+                        Padding="7.5"
+                        Background="{DynamicResource Button}"
+                        HorizontalContentAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        IsTabStop="False"
+                        Click="UpdateBtn_Clicked">
+
+                    <Image x:Name="UpdateImage"
+                           Stretch="Uniform"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Center"/>
+
+                    <Button.Resources>
+                        <Style TargetType="{x:Type Border}">
+                            <Setter Property="CornerRadius"
+                                    Value="7.5"/>
+                        </Style>
+                    </Button.Resources>
+                </Button>
+                
                 <Button Style="{StaticResource ButtonStyle}"
                         Grid.Row="1"
                         Grid.Column="4"

@@ -33,18 +33,20 @@ public sealed partial class MainWindow : Window
         _client = client;
 
         CurrentVideo = null;
-
-        AutoUpdater.InstalledVersion = AppManager.CurrentVersion;
-        AutoUpdater.ReportErrors = true;
-        AutoUpdater.DownloadPath = Directory.GetCurrentDirectory();
-        AutoUpdater.ClearAppDirectory = true;
-
-        AutoUpdater.CheckForUpdateEvent += AutoUpdaterOnCheckForUpdateEvent;
-
-        AutoUpdater.Start("https://raw.githubusercontent.com/BlyZeYT/YouTube-Downloader/master/Version.xml");
     }
 
-    private void AutoUpdaterOnCheckForUpdateEvent(UpdateInfoEventArgs args)
+    private void IsUpdateAvailable(UpdateInfoEventArgs args)
+    {
+        if (args.Error is not null && args.IsUpdateAvailable)
+        {
+            UpdateImage.Source = GetColoredUpdateIcon((UniColor)AppManager.GetResource<SolidColorBrush>("Text"));
+
+            UpdateBtn.Visibility = Visibility.Visible;
+        }
+        else UpdateBtn.Visibility = Visibility.Collapsed;
+    }
+
+    private void CheckForUpdate(UpdateInfoEventArgs args)
     {
         if (args.Error is null)
         {
@@ -109,6 +111,19 @@ public sealed partial class MainWindow : Window
         SetGroupBoxesState(false);
 
         TaskbarInfo.ProgressState = System.Windows.Shell.TaskbarItemProgressState.None;
+
+        AutoUpdater.InstalledVersion = AppManager.CurrentVersion;
+        AutoUpdater.ReportErrors = true;
+        AutoUpdater.DownloadPath = Directory.GetCurrentDirectory();
+        AutoUpdater.ClearAppDirectory = true;
+
+        AutoUpdater.CheckForUpdateEvent += IsUpdateAvailable;
+
+        AutoUpdater.Start("https://raw.githubusercontent.com/BlyZeYT/YouTube-Downloader/master/Version.xml");
+
+        AutoUpdater.CheckForUpdateEvent -= IsUpdateAvailable;
+
+        AutoUpdater.CheckForUpdateEvent += CheckForUpdate;
 
         SetGroupBoxesState(true);
 
@@ -275,6 +290,11 @@ public sealed partial class MainWindow : Window
         if (e.RightButton is not System.Windows.Input.MouseButtonState.Pressed) return;
 
         new ThemeEditorWindow().ShowDialog();
+    }
+
+    private void UpdateBtn_Clicked(object sender, RoutedEventArgs e)
+    {
+
     }
 
     private void BlyZeLogoBtn_Click(object sender, RoutedEventArgs e)
@@ -630,13 +650,16 @@ public sealed partial class MainWindow : Window
     }
 
     private static BitmapSource GetColoredBackgroundIcon(UniColor color)
-        => new BitmapImage(new Uri(AppManager.BackgroundIconUrl)).ReplaceColor(UniColor.Black, color);
+        => new BitmapImage(new Uri(AppManager.BackgroundIconUrl)).ReplaceColor(color);
 
-    private static BitmapSource GetColoredBlyZeLogo(UniColor toColor)
-        => new BitmapImage(new Uri(AppManager.BlyZeLogoUrl)).ReplaceColor(toColor);
+    private static BitmapSource GetColoredUpdateIcon(UniColor color)
+        => new BitmapImage(new Uri(AppManager.UpdateIconUrl)).ReplaceColor(color);
+
+    private static BitmapSource GetColoredBlyZeLogo(UniColor color)
+        => new BitmapImage(new Uri(AppManager.BlyZeLogoUrl)).ReplaceColor(color);
 
     private static BitmapSource GetColoredInfoIcon(UniColor color)
-        => new BitmapImage(new Uri(AppManager.InfoIconUrl)).ReplaceColor(UniColor.Black, color);
+        => new BitmapImage(new Uri(AppManager.InfoIconUrl)).ReplaceColor(color);
 
     private static bool IsValidFileName(string name) => !Path.GetInvalidFileNameChars().Any(invalidChar => name.Contains(invalidChar));
 

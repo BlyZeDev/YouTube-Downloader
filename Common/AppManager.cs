@@ -12,6 +12,7 @@ using System.Windows.Media.Imaging;
 public static class AppManager
 {
     public const string BackgroundIconUrl = "pack://application:,,,/background_icon.png";
+    public const string UpdateIconUrl = "pack://application:,,,/update_icon.png";
     public const string BlyZeLogoUrl = "pack://application:,,,/blyze_logo.png";
     public const string InfoIconUrl = "pack://application:,,,/info_icon.png";
     public const string NoThumbnailUrl = "pack://application:,,,/no_thumbnail.png";

@@ -19,6 +19,7 @@
     <None Remove="Fonts\OpenSans-Semibold.ttf" />
     <None Remove="Icons\info_icon.png" />
     <None Remove="no_thumbnail.png" />
+    <None Remove="update_icon.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -63,6 +64,9 @@
     </Resource>
     <Resource Include="icon.ico" />
     <Resource Include="no_thumbnail.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="update_icon.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>
