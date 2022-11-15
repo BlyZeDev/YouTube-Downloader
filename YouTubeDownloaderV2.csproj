@@ -5,6 +5,8 @@
     <TargetFramework>net6.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
+    <ApplicationIcon>icon.ico</ApplicationIcon>
+    <AssemblyName>YouTube Downloader</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,20 +22,25 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="icon.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Resource Include="info_icon.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Autoupdater.NET.Official" Version="1.7.6" />
     <PackageReference Include="FFMpegCore" Version="4.7.0" />
     <PackageReference Include="Gu.Wpf.Adorners" Version="2.1.1" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Ookii.Dialogs.Wpf" Version="5.0.1" />
-    <PackageReference Include="Syncfusion.SfInput.WPF" Version="20.3.0.56" />
-    <PackageReference Include="Syncfusion.SfProgressBar.WPF" Version="20.3.0.56" />
-    <PackageReference Include="Syncfusion.Shared.WPF" Version="20.3.0.56" />
+    <PackageReference Include="Syncfusion.SfInput.WPF" Version="20.3.0.57" />
+    <PackageReference Include="Syncfusion.SfProgressBar.WPF" Version="20.3.0.57" />
+    <PackageReference Include="Syncfusion.Shared.WPF" Version="20.3.0.57" />
     <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
     <PackageReference Include="YoutubeExplode" Version="6.2.4" />
     <PackageReference Include="YoutubeExplode.Converter" Version="6.2.4" />
