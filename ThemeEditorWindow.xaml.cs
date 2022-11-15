@@ -63,8 +63,8 @@ public sealed partial class ThemeEditorWindow : Window
         await AppManager.OverrideTheme(
             new Theme(
                 BackgroundColorPicker.Color,
-                ControlColorPicker.Color,
                 ButtonColorPicker.Color,
+                ControlColorPicker.Color,
                 TextColorPicker.Color));
     }
 
