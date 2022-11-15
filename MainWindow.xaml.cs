@@ -41,7 +41,7 @@ public sealed partial class MainWindow : Window
 
         AutoUpdater.CheckForUpdateEvent += AutoUpdaterOnCheckForUpdateEvent;
 
-        AutoUpdater.Start("https://github.com/BlyZeYT/YouTube-Downloader/blob/master/Version.xml");
+        AutoUpdater.Start("https://raw.githubusercontent.com/BlyZeYT/YouTube-Downloader/master/Version.xml");
     }
 
     private void AutoUpdaterOnCheckForUpdateEvent(UpdateInfoEventArgs args)
