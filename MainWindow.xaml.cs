@@ -35,7 +35,6 @@ public sealed partial class MainWindow : Window
         _client = client;
 
         CurrentVideo = null;
-        FirstUpdateCheckCompleted = false;
     }
 
     private void CheckForUpdate(UpdateInfoEventArgs args)
@@ -44,6 +43,7 @@ public sealed partial class MainWindow : Window
         {
             if (args.Error is null && args.IsUpdateAvailable) UpdateBtn.Visibility = Visibility.Visible;
             else UpdateBtn.Visibility = Visibility.Collapsed;
+
             FirstUpdateCheckCompleted = true;
 
             return;
@@ -58,14 +58,14 @@ public sealed partial class MainWindow : Window
                 if (args.Mandatory.Value)
                 {
                     result = MessageBox.Show(
-                        $@"There is new version {args.CurrentVersion} available. You are using version {args.InstalledVersion}. This is required update. Press Ok to begin updating the application.", @"Update Available",
+                        $"There is new version {args.CurrentVersion} available. You are using version {args.InstalledVersion}. This is required update. Press Ok to begin updating the application.", "Update Available",
                         MessageBoxButton.OKCancel,
                         MessageBoxImage.Information);
                 }
                 else
                 {
                     result = MessageBox.Show(
-                        $@"There is new version {args.CurrentVersion} available. You are using version {args.InstalledVersion}. Do you want to update the application now?", @"Update Available",
+                        $"There is new version {args.CurrentVersion} available. You are using version {args.InstalledVersion}. Do you want to update the application now?", "Update Available",
                         MessageBoxButton.YesNo,
                         MessageBoxImage.Information);
                 }
@@ -75,10 +75,7 @@ public sealed partial class MainWindow : Window
                     case MessageBoxResult.Yes or MessageBoxResult.OK:
                         try
                         {
-                            if (AutoUpdater.DownloadUpdate(args))
-                            {
-                                Close();
-                            }
+                            if (AutoUpdater.DownloadUpdate(args)) Close();
                         }
                         catch (Exception ex)
                         {
@@ -86,9 +83,7 @@ public sealed partial class MainWindow : Window
                         }
                         break;
 
-                    case MessageBoxResult.Cancel:
-                        Close();
-                        break;
+                    case MessageBoxResult.Cancel: Close(); break;
                 }
             }
         }
@@ -97,8 +92,8 @@ public sealed partial class MainWindow : Window
             if (args.Error is WebException)
             {
                 MessageBox.Show(
-                    @"There is a problem reaching update server. Please check your internet connection and try again later.",
-                    @"Update Check Failed", MessageBoxButton.OK, MessageBoxImage.Error);
+                    "There is a problem reaching update server. Please check your internet connection and try again later.",
+                    "Update Check Failed", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             else
             {
@@ -114,6 +109,8 @@ public sealed partial class MainWindow : Window
         SetGroupBoxesState(false);
 
         TaskbarInfo.ProgressState = System.Windows.Shell.TaskbarItemProgressState.None;
+
+        FirstUpdateCheckCompleted = false;
 
         AutoUpdater.InstalledVersion = AppManager.CurrentVersion;
         AutoUpdater.ReportErrors = true;
