@@ -11,4 +11,4 @@ Download video and audio from YouTube in every quality
 - Supports YouTube search, so you don't have to get the link
 - Supports Thumbnail download
 - Supports background images to personalize your downloader
-- Supports custom themes
+- Supports custom themes and a Theme Editor for easy customization
