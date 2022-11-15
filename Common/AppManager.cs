@@ -45,8 +45,6 @@ public static class AppManager
 
     public const string DownloadPathFile = "download_path.txt";
 
-    public const string ReadMeFile = "README.txt";
-
     public const string BackgroundImageFile = "background.png";
 
     public const string ReplaceBackgroundFile = "background_replacement.txt";
@@ -234,14 +232,6 @@ public static class AppManager
         if (!File.Exists(ProgramFolder(ReplaceBackgroundFile)))
         {
             using (var sw = new StreamWriter(ProgramFolder(ReplaceBackgroundFile)))
-            {
-                await sw.WriteAsync("");
-            }
-        }
-
-        if (!File.Exists(ProgramFolder(ReadMeFile)))
-        {
-            using (var sw = new StreamWriter(ProgramFolder(ReadMeFile)))
             {
                 await sw.WriteAsync("");
             }
