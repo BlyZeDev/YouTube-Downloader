@@ -25,6 +25,8 @@ public sealed partial class MainWindow : Window
 
     private Video? CurrentVideo { get; set; }
 
+    private bool FirstUpdateCheckCompleted { get; set; }
+
     private readonly IYouTubeClient _client;
 
     public MainWindow(IYouTubeClient client)
@@ -33,21 +35,20 @@ public sealed partial class MainWindow : Window
         _client = client;
 
         CurrentVideo = null;
-    }
-
-    private void IsUpdateAvailable(UpdateInfoEventArgs args)
-    {
-        if (args.Error is not null && args.IsUpdateAvailable)
-        {
-            UpdateImage.Source = GetColoredUpdateIcon((UniColor)AppManager.GetResource<SolidColorBrush>("Text"));
-
-            UpdateBtn.Visibility = Visibility.Visible;
-        }
-        else UpdateBtn.Visibility = Visibility.Collapsed;
+        FirstUpdateCheckCompleted = false;
     }
 
     private void CheckForUpdate(UpdateInfoEventArgs args)
     {
+        if (!FirstUpdateCheckCompleted)
+        {
+            if (args.Error is null && args.IsUpdateAvailable) UpdateBtn.Visibility = Visibility.Visible;
+            else UpdateBtn.Visibility = Visibility.Collapsed;
+            FirstUpdateCheckCompleted = true;
+
+            return;
+        }
+
         if (args.Error is null)
         {
             if (args.IsUpdateAvailable)
@@ -108,6 +109,8 @@ public sealed partial class MainWindow : Window
 
     private async void Window_SourceInitialized(object sender, EventArgs e)
     {
+        UpdateBtn.Visibility = Visibility.Collapsed;
+
         SetGroupBoxesState(false);
 
         TaskbarInfo.ProgressState = System.Windows.Shell.TaskbarItemProgressState.None;
@@ -117,13 +120,9 @@ public sealed partial class MainWindow : Window
         AutoUpdater.DownloadPath = Directory.GetCurrentDirectory();
         AutoUpdater.ClearAppDirectory = true;
 
-        AutoUpdater.CheckForUpdateEvent += IsUpdateAvailable;
+        AutoUpdater.CheckForUpdateEvent += CheckForUpdate;
 
         AutoUpdater.Start("https://raw.githubusercontent.com/BlyZeYT/YouTube-Downloader/master/Version.xml");
-
-        AutoUpdater.CheckForUpdateEvent -= IsUpdateAvailable;
-
-        AutoUpdater.CheckForUpdateEvent += CheckForUpdate;
 
         SetGroupBoxesState(true);
 
@@ -292,10 +291,8 @@ public sealed partial class MainWindow : Window
         new ThemeEditorWindow().ShowDialog();
     }
 
-    private void UpdateBtn_Clicked(object sender, RoutedEventArgs e)
-    {
-
-    }
+    private void UpdateBtn_Click(object sender, RoutedEventArgs e)
+        => AutoUpdater.Start("https://raw.githubusercontent.com/BlyZeYT/YouTube-Downloader/master/Version.xml");
 
     private void BlyZeLogoBtn_Click(object sender, RoutedEventArgs e)
         => Process.Start(new ProcessStartInfo("https://github.com/BlyZeYT") { UseShellExecute = true });
@@ -575,6 +572,7 @@ public sealed partial class MainWindow : Window
         BackgroundImageBtnImage.Source = GetColoredBackgroundIcon(text);
         BlyZeLogoImage.Source = GetColoredBlyZeLogo(text);
         VideoInfoImage.Source = GetColoredInfoIcon(text);
+        UpdateImage.Source = GetColoredUpdateIcon(text);
 
         return Task.CompletedTask;
     }

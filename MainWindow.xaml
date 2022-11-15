@@ -396,7 +396,7 @@
                         HorizontalContentAlignment="Center"
                         VerticalContentAlignment="Center"
                         IsTabStop="False"
-                        Click="UpdateBtn_Clicked">
+                        Click="UpdateBtn_Click">
 
                     <Image x:Name="UpdateImage"
                            Stretch="Uniform"
@@ -413,7 +413,7 @@
                 
                 <Button Style="{StaticResource ButtonStyle}"
                         Grid.Row="1"
-                        Grid.Column="4"
+                        Grid.Column="5"
                         BorderThickness="0"
                         Height="50"
                         Width="50"
@@ -441,7 +441,7 @@
                 <Button x:Name="StartBtn"
                         Style="{StaticResource ButtonStyle}"
                         Grid.Row="1"
-                        Grid.Column="5"
+                        Grid.Column="6"
                         BorderThickness="0"
                         Background="{DynamicResource Button}"
                         Height="60"
