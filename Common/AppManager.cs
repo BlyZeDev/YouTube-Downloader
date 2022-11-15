@@ -51,12 +51,17 @@ public static class AppManager
     public const string ReplaceBackgroundFile = "background_replacement.txt";
 
 
+    public static Version CurrentVersion { get; }
+
+
     public static string ProgramFolderPath { get; }
 
     public static string FfmpegPath { get; }
 
     static AppManager()
     {
+        CurrentVersion = new Version("2.0.0.0");
+
         ProgramFolderPath = Path.Combine(
             Environment.GetFolderPath(
                 Environment.SpecialFolder.ApplicationData,

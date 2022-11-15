@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
@@ -33,14 +34,74 @@ public sealed partial class MainWindow : Window
 
         CurrentVideo = null;
 
-        AutoUpdater.InstalledVersion = new Version("2.0.0.0");
-        AutoUpdater.ShowRemindLaterButton = false;
+        AutoUpdater.InstalledVersion = AppManager.CurrentVersion;
         AutoUpdater.ReportErrors = false;
         AutoUpdater.DownloadPath = Directory.GetCurrentDirectory();
         AutoUpdater.ClearAppDirectory = true;
-        AutoUpdater.UpdateFormSize = new System.Drawing.Size(500, 500);
+
+        AutoUpdater.CheckForUpdateEvent += AutoUpdaterOnCheckForUpdateEvent;
 
         AutoUpdater.Start("https://raw.githubusercontent.com/BlyZeYT/YouTube-Downloader/master/LatestVersion.xml");
+    }
+
+    private void AutoUpdaterOnCheckForUpdateEvent(UpdateInfoEventArgs args)
+    {
+        if (args.Error is null)
+        {
+            if (args.IsUpdateAvailable)
+            {
+                MessageBoxResult result;
+
+                if (args.Mandatory.Value)
+                {
+                    result = MessageBox.Show(
+                        $@"There is new version {args.CurrentVersion} available. You are using version {args.InstalledVersion}. This is required update. Press Ok to begin updating the application.", @"Update Available",
+                        MessageBoxButton.OKCancel,
+                        MessageBoxImage.Information);
+                }
+                else
+                {
+                    result = MessageBox.Show(
+                        $@"There is new version {args.CurrentVersion} available. You are using version {args.InstalledVersion}. Do you want to update the application now?", @"Update Available",
+                        MessageBoxButton.YesNo,
+                        MessageBoxImage.Information);
+                }
+
+                switch (result)
+                {
+                    case MessageBoxResult.Yes or MessageBoxResult.OK:
+                        try
+                        {
+                            if (AutoUpdater.DownloadUpdate(args))
+                            {
+                                Close();
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show(ex.Message, ex.GetType().ToString(), MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
+                        break;
+
+                    case MessageBoxResult.Cancel:
+                        Close();
+                        break;
+                }
+            }
+        }
+        else
+        {
+            if (args.Error is WebException)
+            {
+                MessageBox.Show(
+                    @"There is a problem reaching update server. Please check your internet connection and try again later.",
+                    @"Update Check Failed", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            else
+            {
+                MessageBox.Show(args.Error.Message, args.Error.GetType().ToString(), MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
     }
 
     private async void Window_SourceInitialized(object sender, EventArgs e)
@@ -97,13 +158,13 @@ public sealed partial class MainWindow : Window
 
                 return;
             }
+
+            await _client.CancelDownloadIfRunning();
+
+            var ffmpegProcess = Process.GetProcessesByName("ffmpeg");
+
+            if (ffmpegProcess.Length == 1) ffmpegProcess.First().Kill();
         }
-
-        await _client.CancelDownloadIfRunning();
-
-        var ffmpegProcess = Process.GetProcessesByName("ffmpeg");
-
-        if (ffmpegProcess.Length == 1) ffmpegProcess.First().Kill();
     }
 
     private void MainGroupBox_IsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
