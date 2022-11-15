@@ -35,13 +35,13 @@ public sealed partial class MainWindow : Window
         CurrentVideo = null;
 
         AutoUpdater.InstalledVersion = AppManager.CurrentVersion;
-        AutoUpdater.ReportErrors = false;
+        AutoUpdater.ReportErrors = true;
         AutoUpdater.DownloadPath = Directory.GetCurrentDirectory();
         AutoUpdater.ClearAppDirectory = true;
 
         AutoUpdater.CheckForUpdateEvent += AutoUpdaterOnCheckForUpdateEvent;
 
-        AutoUpdater.Start("https://raw.githubusercontent.com/BlyZeYT/YouTube-Downloader/master/LatestVersion.xml");
+        AutoUpdater.Start("https://github.com/BlyZeYT/YouTube-Downloader/blob/master/LatestVersion.xml");
     }
 
     private void AutoUpdaterOnCheckForUpdateEvent(UpdateInfoEventArgs args)
