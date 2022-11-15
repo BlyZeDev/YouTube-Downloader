@@ -1,5 +1,6 @@
 ﻿namespace YouTubeDownloaderV2;
 
+using AutoUpdaterDotNET;
 using Ookii.Dialogs.Wpf;
 using Syncfusion.Windows.Tools.Controls;
 using System;
@@ -31,6 +32,15 @@ public sealed partial class MainWindow : Window
         _client = client;
 
         CurrentVideo = null;
+
+        AutoUpdater.InstalledVersion = new Version("2.0.0.0");
+        AutoUpdater.ShowRemindLaterButton = false;
+        AutoUpdater.ReportErrors = false;
+        AutoUpdater.DownloadPath = Directory.GetCurrentDirectory();
+        AutoUpdater.ClearAppDirectory = true;
+        AutoUpdater.UpdateFormSize = new System.Drawing.Size(500, 500);
+
+        AutoUpdater.Start("https://raw.githubusercontent.com/BlyZeYT/YouTube-Downloader/master/LatestVersion.xml");
     }
 
     private async void Window_SourceInitialized(object sender, EventArgs e)

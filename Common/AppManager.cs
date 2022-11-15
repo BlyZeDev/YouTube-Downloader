@@ -51,9 +51,6 @@ public static class AppManager
     public const string ReplaceBackgroundFile = "background_replacement.txt";
 
 
-    public const string CurrentVersionFile = "Version 20";
-
-
     public static string ProgramFolderPath { get; }
 
     public static string FfmpegPath { get; }
@@ -187,17 +184,6 @@ public static class AppManager
 
     private static async Task CheckAndCreateFiles()
     {
-        if (!File.Exists(ProgramFolder(CurrentVersionFile)))
-        {
-            Directory.Delete(ProgramFolderPath, true);
-
-            CreateDirectory();
-
-            using (File.Create(ProgramFolder(CurrentVersionFile))) { }
-
-            File.SetAttributes(ProgramFolder(CurrentVersionFile), FileAttributes.Hidden);
-        }
-
         if (!File.Exists(ProgramFolder(StandardThemeJson)))
         {
             await OverrideTheme(StandardThemeJson, StandardTheme);
