@@ -2,5 +2,5 @@
 <item>
 	<version>2.3.0.0</version>
 	<url>https://github.com/BlyZeYT/YouTube-Downloader/releases/download/2.1.0.0/YouTube-Downloader-v2.1.0.0.zip</url>
-	<mandatory>false</mandatory>
+	<mandatory>true</mandatory>
 </item>
