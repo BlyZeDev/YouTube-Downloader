@@ -119,7 +119,7 @@
                FontWeight="Bold"
                IsTabStop="False"/>
 
-        <Label Content="Not supported from YouTube"
+        <Label x:Name="DislikesLabel"
                Grid.Row="4"
                Grid.Column="1"
                FontSize="20"

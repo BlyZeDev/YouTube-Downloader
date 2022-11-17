@@ -2,19 +2,22 @@
 
 using System.Diagnostics;
 using System.Windows;
+using YouTubeDownloaderV2.Services;
 using YoutubeExplode.Videos;
 
 public sealed partial class VideoDetailsWindow : Window
 {
+    private readonly IYouTubeClient _client;
     private readonly Video _video;
 
-    public VideoDetailsWindow(Video video)
+    public VideoDetailsWindow(IYouTubeClient client, Video video)
     {
         InitializeComponent();
+        _client = client;
         _video = video;
     }
 
-    private void Window_Loaded(object sender, RoutedEventArgs e)
+    private async void Window_Loaded(object sender, RoutedEventArgs e)
     {
         ChannelNameLabel.Content = _video.Author.ChannelTitle;
         ChannelNameLabel.ToolTip = _video.Author.ChannelUrl;
@@ -23,6 +26,9 @@ public sealed partial class VideoDetailsWindow : Window
         LikesLabel.Content = _video.Engagement.LikeCount.ToString("N0");
         DescriptionTextBlock.Text = _video.Description;
         KeywordsTextBox.Text = string.Join(", ", _video.Keywords);
+
+        var dislikes = await _client.GetVideoDislikesAsync(_video.Id);
+        DislikesLabel.Content = dislikes == -1 ? "No dislikes available" : dislikes.ToString("N0");
     }
 
     private void ChannelNameLabel_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)

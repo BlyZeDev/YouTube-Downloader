@@ -1,14 +1,18 @@
 ﻿namespace YouTubeDownloaderV2;
 
+using Ookii.Dialogs.Wpf;
 using System.Windows;
 using System.Windows.Media;
 using YouTubeDownloaderV2.Common;
 
 public sealed partial class ThemeEditorWindow : Window
 {
-    public ThemeEditorWindow()
+    private readonly string _downloadFolderPath;
+
+    public ThemeEditorWindow(string downloadFolderPath)
     {
         InitializeComponent();
+        _downloadFolderPath = downloadFolderPath;
     }
 
     private void Window_SourceInitialized(object sender, System.EventArgs e)
@@ -53,6 +57,65 @@ public sealed partial class ThemeEditorWindow : Window
                 TextColorPicker.Color.R, TextColorPicker.Color.G, TextColorPicker.Color.B);
 
         SetResource("TextTE", (SolidColorBrush)(UniColor)TextColorPicker.Color);
+    }
+
+    private async void ImportBtn_Click(object sender, RoutedEventArgs e)
+    {
+        var dialog = new VistaOpenFileDialog()
+        {
+            AddExtension = true,
+            CheckFileExists = true,
+            CheckPathExists = true,
+            DefaultExt = ".json",
+            Filter = "JSON (*json)|*json",
+            InitialDirectory = _downloadFolderPath,
+            Multiselect = false,
+            ValidateNames = true
+        };
+
+        if (!(dialog.ShowDialog() ?? false)) return;
+
+        var theme = await AppManager.TryImportThemeAsync(dialog.FileName);
+
+        if (theme is null) MessageBox.Show("Something is wrong with the theme file!", "", MessageBoxButton.OK, MessageBoxImage.Error);
+        else
+        {
+            BackgroundColorPicker.Color = theme.Background;
+            ControlColorPicker.Color = theme.Control;
+            ButtonColorPicker.Color = theme.Button;
+            TextColorPicker.Color = theme.Text;
+
+            MessageBox.Show("Theme was imported successfully!", "", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+    }
+
+    private async void ExportBtn_Click(object sender, RoutedEventArgs e)
+    {
+        var dialog = new VistaSaveFileDialog()
+        {
+            AddExtension = true,
+            CheckFileExists = true,
+            CheckPathExists = true,
+            DefaultExt = ".json",
+            FileName = "YouTubeDownloaderCustomTheme",
+            Filter = "JSON (*json)|*json",
+            InitialDirectory = _downloadFolderPath,
+            OverwritePrompt = true,
+            ValidateNames = true
+        };
+
+        if (!(dialog.ShowDialog() ?? false)) return;
+
+        var succeeded = await AppManager.TryExportThemeAsync(
+            dialog.FileName,
+            new Theme(
+                BackgroundColorPicker.Color,
+                ButtonColorPicker.Color,
+                ControlColorPicker.Color,
+                TextColorPicker.Color));
+
+        if (succeeded) MessageBox.Show("Theme was exported successfully!", "", MessageBoxButton.OK, MessageBoxImage.Information);
+        else MessageBox.Show("Something went wrong!", "", MessageBoxButton.OK, MessageBoxImage.Error);
     }
 
     private async void SaveBtn_Click(object sender, RoutedEventArgs e)

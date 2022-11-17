@@ -1,6 +1,7 @@
 ﻿namespace YouTubeDownloaderV2.Services;
 
 using FFMpegCore;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -30,6 +31,8 @@ public interface IYouTubeClient
     public IEnumerable<Resolution> GetVideoResolutions(StreamManifest manifest);
 
     public IEnumerable<Bitrate> GetAudioBitrates(StreamManifest manifest);
+
+    public ValueTask<long> GetVideoDislikesAsync(VideoId videoId);
 
     public ValueTask<bool> TryDownloadThumbnailAsync(VideoId videoId, string fullPath);
 
@@ -87,6 +90,23 @@ public sealed class YouTubeClient : IYouTubeClient
 
     public IEnumerable<Bitrate> GetAudioBitrates(StreamManifest manifest)
         => manifest.GetAudioOnlyStreams().Select(x => x.Bitrate).DistinctBy(x => (int)x.KiloBitsPerSecond);
+
+    public async ValueTask<long> GetVideoDislikesAsync(VideoId videoId)
+    {
+        using (var client = new HttpClient())
+        {
+            try
+            {
+                dynamic request = JObject.Parse(await client.GetStringAsync($"https://returnyoutubedislikeapi.com/votes?videoId={videoId}"));
+
+                return (long)request.dislikes;
+            }
+            catch (Exception)
+            {
+                return -1;
+            }
+        }
+    }
 
     public async ValueTask<bool> TryDownloadThumbnailAsync(VideoId videoId, string fullPath)
     {

@@ -117,7 +117,15 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+
         <Label Grid.Row="0"
+               Grid.ColumnSpan="5"
                Content="Theme Preview"
                Margin="5,0,5,7.5"
                FontSize="25"
@@ -131,15 +139,17 @@
                IsTabStop="False"/>
 
         <Border Grid.Row="1"
+                Grid.ColumnSpan="5"
                 Background="{DynamicResource BackgroundTE}"
                 BorderBrush="{DynamicResource ControlTE}"
                 BorderThickness="3"
                 CornerRadius="7.5"
                 Padding="25,30,25,30">
 
-            <Grid ClipToBounds="True" UseLayoutRounding="True">
+            <Grid ClipToBounds="True" UseLayoutRounding="True" Grid.ColumnSpan="5">
 
                 <TextBox Grid.Row="0"
+                         Grid.ColumnSpan="5"
                          BorderThickness="0"
                          Height="35"
                          Width="350"
@@ -166,6 +176,7 @@
 
                 <Button Style="{StaticResource ButtonStyle}"
                         Grid.Row="0"
+                        Grid.ColumnSpan="5"
                         BorderThickness="0"
                         HorizontalAlignment="Right"
                         Background="{DynamicResource ButtonTE}"
@@ -190,6 +201,7 @@
         </Border>
 
         <Border Grid.Row="2"
+                Grid.ColumnSpan="5"
                 Background="{DynamicResource Background}">
             <TabControl Style="{StaticResource TabControlStyle}"
                         Margin="0,15,0,0"
@@ -283,15 +295,65 @@
             </TabControl>
         </Border>
 
-        <Button x:Name="SaveBtn"
+        <Button x:Name="ImportBtn"
                 Style="{StaticResource ButtonStyle}"
                 Grid.Row="3"
                 Grid.Column="0"
                 BorderThickness="0"
                 Background="{DynamicResource Button}"
                 Height="50"
+                Margin="0,0,5,10"
+                Padding="20,0,20,0"
+                Content="Import"
+                FontFamily="{StaticResource OpenSans}"
+                FontWeight="Bold"
+                FontSize="25"
+                Foreground="{DynamicResource Text}"
+                IsTabStop="False"
+                Click="ImportBtn_Click">
+
+            <Button.Resources>
+                <Style TargetType="{x:Type Border}">
+                    <Setter Property="CornerRadius"
+                            Value="7.5"/>
+                </Style>
+            </Button.Resources>
+        </Button>
+        
+        <Button x:Name="ExportBtn"
+                Style="{StaticResource ButtonStyle}"
+                Grid.Row="3"
+                Grid.Column="1"
+                BorderThickness="0"
+                Background="{DynamicResource Button}"
+                Height="50"
+                Margin="5,0,0,10"
+                Padding="20,0,20,0"
+                Content="Export"
+                FontFamily="{StaticResource OpenSans}"
+                FontWeight="Bold"
+                FontSize="25"
+                Foreground="{DynamicResource Text}"
+                IsTabStop="False"
+                Click="ExportBtn_Click">
+
+            <Button.Resources>
+                <Style TargetType="{x:Type Border}">
+                    <Setter Property="CornerRadius"
+                            Value="7.5"/>
+                </Style>
+            </Button.Resources>
+        </Button>
+        
+        <Button x:Name="SaveBtn"
+                Style="{StaticResource ButtonStyle}"
+                Grid.Row="3"
+                Grid.Column="3"
+                BorderThickness="0"
+                Background="{DynamicResource Button}"
+                Height="50"
                 Margin="0,0,0,10"
-                Padding="25,0,25,0"
+                Padding="100,0,100,0"
                 Content="Save"
                 FontFamily="{StaticResource OpenSans}"
                 FontWeight="Bold"

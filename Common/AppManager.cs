@@ -59,7 +59,7 @@ public static class AppManager
 
     static AppManager()
     {
-        CurrentVersion = new Version("2.0.0.0");
+        CurrentVersion = new Version("2.1.0.0");
 
         ProgramFolderPath = Path.Combine(
             Environment.GetFolderPath(
@@ -78,7 +78,7 @@ public static class AppManager
 
     public static void SetResource<T>(string resource, T value) => Application.Current.Resources[resource] = value;
 
-    public static async ValueTask<string> GetReplaceBackgroundFile()
+    public static async ValueTask<string> GetReplaceBackgroundFileAsync()
     {
         using (var sr = new StreamReader(ProgramFolder(ReplaceBackgroundFile)))
         {
@@ -86,7 +86,7 @@ public static class AppManager
         }
     }
 
-    public static async Task SetReplaceBackgroundFile(string backgroundPath)
+    public static async Task SetReplaceBackgroundFileAsync(string backgroundPath)
     {
         using (var sw = new StreamWriter(ProgramFolder(ReplaceBackgroundFile)))
         {
@@ -131,7 +131,7 @@ public static class AppManager
         }
     }
 
-    public static async Task SetDownloadFolderPath(string path)
+    public static async Task SetDownloadFolderPathAsync(string path)
     {
         using (var sw = new StreamWriter(ProgramFolder(DownloadPathFile)))
         {
@@ -141,7 +141,7 @@ public static class AppManager
 
     public static string GetSelectedThemeFile() => GetCurrentThemeJson();
 
-    public static async ValueTask<Theme> GetSelectedTheme()
+    public static async ValueTask<Theme> GetSelectedThemeAsync()
     {
         using (var sr = new StreamReader(ProgramFolder(GetCurrentThemeJson())))
         {
@@ -149,9 +149,41 @@ public static class AppManager
         }
     }
 
-    public static async Task OverrideTheme(Theme theme) => await OverrideTheme(CustomThemeJson, theme);
+    public static async Task OverrideTheme(Theme theme) => await OverrideThemeAsync(CustomThemeJson, theme);
 
-    public static async Task SetSelectedTheme(string themeJsonFile)
+    public static async ValueTask<Theme?> TryImportThemeAsync(string filePath)
+    {
+        try
+        {
+            using (var sr = new StreamReader(filePath))
+            {
+                return JsonConvert.DeserializeObject<Theme>(await sr.ReadToEndAsync());
+            }
+        }
+        catch (Exception)
+        {
+            return null;
+        }
+    }
+
+    public static async ValueTask<bool> TryExportThemeAsync(string filePath, Theme theme)
+    {
+        try
+        {
+            using (var sw = new StreamWriter(filePath))
+            {
+                await sw.WriteAsync(JsonConvert.SerializeObject(theme));
+
+                return true;
+            }
+        }
+        catch (Exception)
+        {
+            return false;
+        }
+    }
+
+    public static async Task SetSelectedThemeAsync(string themeJsonFile)
     {
         using (var sw = new StreamWriter(ProgramFolder(SelectedThemeFile)))
         {
@@ -159,14 +191,14 @@ public static class AppManager
         }
     }
 
-    public static async Task InitializeAppData()
+    public static async Task InitializeAppDataAsync()
     {
         if (!DoesDirectoryExist()) CreateDirectory();
 
-        await CheckAndCreateFiles();
+        await CheckAndCreateFilesAsync();
     }
 
-    private static async Task OverrideTheme(string themeFile, Theme theme)
+    private static async Task OverrideThemeAsync(string themeFile, Theme theme)
     {
         using (var sw = new StreamWriter(ProgramFolder(themeFile)))
         {
@@ -186,26 +218,26 @@ public static class AppManager
 
     private static void CreateDirectory() => Directory.CreateDirectory(ProgramFolderPath);
 
-    private static async Task CheckAndCreateFiles()
+    private static async Task CheckAndCreateFilesAsync()
     {
         if (!File.Exists(ProgramFolder(StandardThemeJson)))
         {
-            await OverrideTheme(StandardThemeJson, StandardTheme);
+            await OverrideThemeAsync(StandardThemeJson, StandardTheme);
         }
 
         if (!File.Exists(ProgramFolder(LightThemeJson)))
         {
-            await OverrideTheme(LightThemeJson, LightTheme);
+            await OverrideThemeAsync(LightThemeJson, LightTheme);
         }
 
         if (!File.Exists(ProgramFolder(DarkThemeJson)))
         {
-            await OverrideTheme(DarkThemeJson, DarkTheme);
+            await OverrideThemeAsync(DarkThemeJson, DarkTheme);
         }
 
         if (!File.Exists(ProgramFolder(NeonThemeJson)))
         {
-            await OverrideTheme(NeonThemeJson, NeonTheme);
+            await OverrideThemeAsync(NeonThemeJson, NeonTheme);
         }
 
         if (!File.Exists(ProgramFolder(CustomThemeJson)))

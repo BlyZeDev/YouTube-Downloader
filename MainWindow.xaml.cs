@@ -125,9 +125,9 @@ public sealed partial class MainWindow : Window
 
         VideoDetailsGroupBox.IsEnabled = false;
 
-        await AppManager.InitializeAppData();
+        await AppManager.InitializeAppDataAsync();
 
-        var replacementBackground = await AppManager.GetReplaceBackgroundFile();
+        var replacementBackground = await AppManager.GetReplaceBackgroundFileAsync();
 
         if (!string.IsNullOrWhiteSpace(replacementBackground))
         {
@@ -234,7 +234,7 @@ public sealed partial class MainWindow : Window
 
         Background = new ImageBrush(new BitmapImage(new Uri(dialog.FileName)) { CacheOption = BitmapCacheOption.OnLoad });
 
-        await AppManager.SetReplaceBackgroundFile(dialog.FileName);
+        await AppManager.SetReplaceBackgroundFileAsync(dialog.FileName);
 
         Visibility = Visibility.Visible;
     }
@@ -253,7 +253,7 @@ public sealed partial class MainWindow : Window
 
             await ApplyNonDynamicTheme();
 
-            await AppManager.SetReplaceBackgroundFile("null");
+            await AppManager.SetReplaceBackgroundFileAsync("null");
         }
     }
 
@@ -261,15 +261,15 @@ public sealed partial class MainWindow : Window
     {
         switch (ThemeComboBox.SelectedIndex)
         {
-            case 0: await AppManager.SetSelectedTheme(AppManager.StandardThemeJson); break;
+            case 0: await AppManager.SetSelectedThemeAsync(AppManager.StandardThemeJson); break;
 
-            case 1: await AppManager.SetSelectedTheme(AppManager.DarkThemeJson); break;
+            case 1: await AppManager.SetSelectedThemeAsync(AppManager.DarkThemeJson); break;
 
-            case 2: await AppManager.SetSelectedTheme(AppManager.LightThemeJson); break;
+            case 2: await AppManager.SetSelectedThemeAsync(AppManager.LightThemeJson); break;
 
-            case 3: await AppManager.SetSelectedTheme(AppManager.NeonThemeJson); break;
+            case 3: await AppManager.SetSelectedThemeAsync(AppManager.NeonThemeJson); break;
 
-            case 4: await AppManager.SetSelectedTheme(AppManager.CustomThemeJson); break;
+            case 4: await AppManager.SetSelectedThemeAsync(AppManager.CustomThemeJson); break;
 
             default: return;
         }
@@ -285,7 +285,7 @@ public sealed partial class MainWindow : Window
 
         if (e.RightButton is not System.Windows.Input.MouseButtonState.Pressed) return;
 
-        new ThemeEditorWindow().ShowDialog();
+        new ThemeEditorWindow(DownloadPathTextBox.Text).ShowDialog();
     }
 
     private void UpdateBtn_Click(object sender, RoutedEventArgs e)
@@ -373,7 +373,7 @@ public sealed partial class MainWindow : Window
     }
 
     private void VideoInfoButton_Click(object sender, RoutedEventArgs e)
-        => new VideoDetailsWindow(CurrentVideo!).ShowDialog();
+        => new VideoDetailsWindow(_client, CurrentVideo!).ShowDialog();
 
     private async void DownloadPathTextBox_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
     {
@@ -388,7 +388,7 @@ public sealed partial class MainWindow : Window
         if (dialog.ShowDialog() ?? false)
         {
             DownloadPathTextBox.Text = dialog.SelectedPath;
-            await AppManager.SetDownloadFolderPath(dialog.SelectedPath);
+            await AppManager.SetDownloadFolderPathAsync(dialog.SelectedPath);
         }
     }
 
@@ -636,7 +636,7 @@ public sealed partial class MainWindow : Window
 
     private static async Task SetThemeResources()
     {
-        var theme = await AppManager.GetSelectedTheme();
+        var theme = await AppManager.GetSelectedThemeAsync();
 
         AppManager.SetResource("Background", (SolidColorBrush)theme.Background);
         AppManager.SetResource("Control", (SolidColorBrush)theme.Control);
