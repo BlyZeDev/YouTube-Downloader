@@ -112,10 +112,11 @@ public sealed partial class MainWindow : Window
 
         FirstUpdateCheckCompleted = false;
 
+        AutoUpdater.RunUpdateAsAdmin = true;
+        AutoUpdater.InstallationPath = Directory.GetCurrentDirectory();
         AutoUpdater.InstalledVersion = AppManager.CurrentVersion;
         AutoUpdater.ReportErrors = true;
-        AutoUpdater.DownloadPath = Directory.GetCurrentDirectory();
-        AutoUpdater.ClearAppDirectory = true;
+        AutoUpdater.ClearAppDirectory = false;
 
         AutoUpdater.CheckForUpdateEvent += CheckForUpdate;
 
