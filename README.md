@@ -1,4 +1,4 @@
-![](https://user-images.githubusercontent.com/95288041/202178630-ec128041-45a1-4c5d-8d92-195649999800.png)
+![](https://user-images.githubusercontent.com/95288041/202642673-f2f5dffa-e4a3-400d-b046-2b9720fe1afe.svg)
 
 # YouTube Downloader
 Download video and audio from YouTube in every quality
