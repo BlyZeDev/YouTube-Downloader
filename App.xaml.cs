@@ -11,7 +11,7 @@ public sealed partial class App : Application
 
     public App()
     {
-        Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("NzQzNDUxQDMyMzAyZTMzMmUzMG1PbERFdHFidVJqczF3bUpYTzZCSWZWaFdueFZKTEdiOHc5NlJkR3Y4bVU9");
+        Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("OTE0NzIzQDMyMzAyZTM0MmUzMEZxM0Zia3dSTjNpZmtOVUNMN1dkS1hkZ1QyVU8zakVWaCtDUWNNdmtUWGM9");
 
         AppHost = Host.CreateDefaultBuilder()
             .ConfigureServices((context, services) =>

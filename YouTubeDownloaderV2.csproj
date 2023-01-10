@@ -33,14 +33,14 @@
     <PackageReference Include="FFMpegCore" Version="4.7.0" />
     <PackageReference Include="Gu.Wpf.Adorners" Version="2.1.1" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
     <PackageReference Include="Ookii.Dialogs.Wpf" Version="5.0.1" />
-    <PackageReference Include="Syncfusion.SfInput.WPF" Version="20.3.0.57" />
-    <PackageReference Include="Syncfusion.SfProgressBar.WPF" Version="20.3.0.57" />
-    <PackageReference Include="Syncfusion.Shared.WPF" Version="20.3.0.57" />
+    <PackageReference Include="Syncfusion.SfInput.WPF" Version="20.4.0.43" />
+    <PackageReference Include="Syncfusion.SfProgressBar.WPF" Version="20.4.0.43" />
+    <PackageReference Include="Syncfusion.Shared.WPF" Version="20.4.0.43" />
     <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
-    <PackageReference Include="YoutubeExplode" Version="6.2.4" />
-    <PackageReference Include="YoutubeExplode.Converter" Version="6.2.4" />
+    <PackageReference Include="YoutubeExplode" Version="6.2.5" />
+    <PackageReference Include="YoutubeExplode.Converter" Version="6.2.5" />
   </ItemGroup>
 
   <ItemGroup>
