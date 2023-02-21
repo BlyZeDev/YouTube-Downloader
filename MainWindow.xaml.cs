@@ -486,7 +486,7 @@ public sealed partial class MainWindow : Window
         TaskbarInfo.ProgressState = System.Windows.Shell.TaskbarItemProgressState.Indeterminate;
         DownloadProgressBar.IsIndeterminate = true;
 
-        var wasDownloadedSuccessfully = await _client.DownloadVideoAsync(
+        var wasDownloadedSuccessfully = await _client.DownloadFileAsync(
             new Metadata(
                 CurrentVideo!.Url,
                 Path.Combine(DownloadPathTextBox.Text, TitleTextBox.Text),

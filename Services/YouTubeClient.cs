@@ -2,6 +2,7 @@
 
 using FFMpegCore;
 using Newtonsoft.Json.Linq;
+using Syncfusion.Windows.Controls.Input;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -36,7 +37,7 @@ public interface IYouTubeClient
 
     public ValueTask<bool> TryDownloadThumbnailAsync(VideoId videoId, string fullPath);
 
-    public ValueTask<bool> DownloadVideoAsync(Metadata metadata, DownloadStartedCallback started, DownloadProgressCallback progress, DownloadCancelledCallback cancelled);
+    public ValueTask<bool> DownloadFileAsync(Metadata metadata, DownloadStartedCallback started, DownloadProgressCallback progress, DownloadCancelledCallback cancelled);
 
     public Task CancelDownloadIfRunning();
 }
@@ -143,7 +144,7 @@ public sealed class YouTubeClient : IYouTubeClient
         return false;
     }
 
-    public async ValueTask<bool> DownloadVideoAsync(Metadata metadata, DownloadStartedCallback started, DownloadProgressCallback progress, DownloadCancelledCallback cancelled)
+    public async ValueTask<bool> DownloadFileAsync(Metadata metadata, DownloadStartedCallback started, DownloadProgressCallback progress, DownloadCancelledCallback cancelled)
     {
         IsDownloading = true;
 
@@ -154,7 +155,7 @@ public sealed class YouTubeClient : IYouTubeClient
             CreateCts();
 
             var fullStreams = await GetStreamsAsync(metadata);
-
+            
             started();
 
             if (fullStreams.IsVideoStreamEmpty)
@@ -169,8 +170,8 @@ public sealed class YouTubeClient : IYouTubeClient
             {
                 string temppath = Path.GetTempPath();
 
-                string videotemp = Path.Combine(temppath, $"video-stream_{Guid.NewGuid()}.tmp");
                 string audiotemp = Path.Combine(temppath, $"audio-stream_{Guid.NewGuid()}.tmp");
+                string videotemp = Path.Combine(temppath, $"video-stream_{Guid.NewGuid()}.tmp");
 
                 deletionFiles.Add($"{videotemp}.mp4");
                 deletionFiles.Add($"{audiotemp}.{fullStreams.AudioStream.Container.Name}");
@@ -215,11 +216,14 @@ public sealed class YouTubeClient : IYouTubeClient
     private async Task DownloadVideoTempFile(VideoOnlyStreamInfo videoStream, Metadata metadata, string temppath, DownloadProgressCallback progress)
     {
         await FFMpegArguments
-            .FromUrlInput(new Uri(videoStream.Url))
+            .FromUrlInput(new Uri(videoStream.Url), x =>
+            {
+                x.Seek(metadata.StartTime);
+                x.WithDuration(metadata.GetDuration());
+            })
             .OutputToFile($"{temppath}.mp4", true, x =>
             {
-                x.WithCustomArgument($"-ss {metadata.StartTime} -t {metadata.GetDuration()}");
-                x.WithVideoBitrate((int)videoStream.Bitrate.KiloBitsPerSecond);
+                x.WithVideoBitrate((int)Math.Round(videoStream.Bitrate.KiloBitsPerSecond, 0));
                 x.WithFastStart();
                 x.UsingShortest(true);
                 x.UsingMultithreading(true);
@@ -235,11 +239,14 @@ public sealed class YouTubeClient : IYouTubeClient
     private async Task DownloadAudioTempFile(AudioOnlyStreamInfo audioStream, Metadata metadata, string temppath, DownloadProgressCallback progress)
     {
         await FFMpegArguments
-            .FromUrlInput(new Uri(audioStream.Url))
+            .FromUrlInput(new Uri(audioStream.Url), x =>
+            {
+                x.Seek(metadata.StartTime);
+                x.WithDuration(metadata.GetDuration());
+            })
             .OutputToFile($"{temppath}.{audioStream.Container.Name}", true, x =>
             {
-                x.WithCustomArgument($"-ss {metadata.StartTime} -t {metadata.GetDuration()}");
-                x.WithAudioBitrate((int)audioStream.Bitrate.KiloBitsPerSecond);
+                x.WithAudioBitrate((int)Math.Round(audioStream.Bitrate.KiloBitsPerSecond, 0));
                 x.WithFastStart();
                 x.UsingShortest(true);
                 x.UsingMultithreading(true);
@@ -255,11 +262,13 @@ public sealed class YouTubeClient : IYouTubeClient
     private async Task DownloadAudioFile(AudioOnlyStreamInfo audioStream, Metadata metadata, DownloadProgressCallback progress)
     {
         await FFMpegArguments
-            .FromUrlInput(new Uri(audioStream.Url))
-            .OutputToFile($"{metadata.FullPath}.mp3", true, x =>
+            .FromUrlInput(new Uri(audioStream.Url), x =>
             {
-                x.WithCustomArgument($"-ss {metadata.StartTime} -t {metadata.GetDuration()}");
-                x.WithAudioBitrate((int)audioStream.Bitrate.KiloBitsPerSecond);
+                x.Seek(metadata.StartTime);
+                x.WithDuration(metadata.GetDuration());
+            })
+            .OutputToFile(metadata.FullPath + ".mp3", true, x =>
+            {
                 x.WithAudioCodec(FFMpegCore.Enums.AudioCodec.LibMp3Lame);
                 x.WithFastStart();
                 x.UsingShortest(true);
