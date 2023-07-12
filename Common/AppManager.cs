@@ -59,7 +59,7 @@ public static class AppManager
 
     static AppManager()
     {
-        CurrentVersion = new Version("2.3.0.0");
+        CurrentVersion = new Version("2.3.1.0");
 
         ProgramFolderPath = Path.Combine(
             Environment.GetFolderPath(
